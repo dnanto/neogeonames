@@ -1,2 +1,2 @@
-# lubrivex
-normalize/sniff country names
+# lubricity
+normalize/sniff place names
