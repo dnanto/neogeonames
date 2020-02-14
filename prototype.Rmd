@@ -31,7 +31,7 @@ df.country <-
 ```
 
 ```{r}
-df.src <- read_tsv("data/sample/src.zip", col_types = cols(.default = "c")) %>% select(accver, country)
+df.src <- read_tsv("data/sample/src.zip", col_types = cols(.default = "c")) %>% distinct(country)
 ```
 
 ```{r}
@@ -44,19 +44,42 @@ country.normalize <- function(query, n = 1, ...)
 {
   i <- NA
   
-  # exact
-  if (any(idx <- which(toupper(query) == df.country$iso))) i <- idx
-  else if (any(idx <- which(toupper(query) == df.country$iso3))) i <- idx
-  else if (any(idx <- which(query == df.country$country))) i <- idx
-  else
+  if (!is.na(query))
   {
-    # fuzzy
-    results <- agrep(query, df.country$country, ignore.case = T, ...)
-    if (length(results <= n)) i <- results[[1]]
+    # exact
+    if (any(idx <- which(toupper(query) == df.country$iso))) i <- idx
+    else if (any(idx <- which(toupper(query) == df.country$iso3))) i <- idx
+    else if (any(idx <- which(query == df.country$country))) i <- idx
+    else
+    {
+      # fuzzy
+      results <- agrep(query, df.country$country, ignore.case = T, ...)
+      if (length(results <= n)) i <- results[[1]]
+    }
+    
+    # tokens
+    if (is.na(i) )
+    {
+      tokens <- str_split(query, " ")[[1]]
+      for (ele in tokens)
+      {
+        result <- country.normalize(ele)
+        if (!is.na(result)) 
+        {
+          i <- result
+          break
+        }
+      }
+    }
   }
   
   i
 }
+```
 
-mutate(df.src, clean = sapply(country.sanitize(country), country.normalize))
-``` 
+```{r}
+country.sanitize.vec <- Vectorize(country.sanitize, c("value"), USE.NAMES = F)
+country.normalize.vec <- Vectorize(country.normalize, c("query"), USE.NAMES = F)
+x <- mutate(df.src, clean = df.country$country[country.normalize.vec(country.sanitize.vec(country))])
+x
+```
