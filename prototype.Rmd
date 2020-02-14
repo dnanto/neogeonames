@@ -1,0 +1,58 @@
+```{r setup, include=F}
+library(tidyverse)
+knitr::opts_chunk$set(echo = F)
+```
+
+```{r}
+col_names <- c(
+  "geonameid", "name", "asciiname", "alternatenames",
+  "latitude", "longitude",  "feature_class", "feature_code",
+  "country_code", "cc2",
+  "admin1_code", "admin2_code", "admin3_code", "admin4_code",
+  "population", "elevation", "dem", "timezone",
+  "modification_date"
+)
+df.city <- read_tsv("data/geonames/cities500.zip", col_names = col_names, col_types = "iccccccccccccciiccT")
+```
+
+```{r}
+col_names <- c(
+  "iso", "iso3",	"iso_num", "fips", "country", "capital", "area",
+  "population",	"continent", "tld",	"currency_code",
+  "currency_name", "phone", "postal_code_format", "postal_code_regex",
+  "languages", "geonameid", "neighbours", "equivalent_fips_code"
+)
+df.country <-
+  read_lines("data/geonames/countryInfo.txt") %>%
+  enframe(name = NULL) %>%
+  filter(!startsWith(value, "#")) %>%
+  pull(value) %>%
+  read_tsv(col_names = col_names)
+```
+
+```{r}
+df.src <- read_tsv("data/sample/src.zip", col_types = cols(.default = "c")) %>% select(accver, country)
+```
+
+```{r}
+country.letters <- paste(unique(strsplit(paste(df.country$country, collapse = ""), "")[[1]]), collapse = "")
+country.regex <- str_replace(country.letters, "-", "\\\\-") %>% paste0("[^", ., "]")
+
+normalize_country <- function(value, n = 1, ...)
+{
+  # sanitize
+  # is exact match?
+  # is token an exact match?
+  # is token fuzzy match?
+  value <- str_remove_all(value, country.regex)
+  result <- value %in% df.country$country
+  if (!result) {
+    value <- agrep(value, df.country$country, ignore.case = T, ...)
+    value <- if (length(value) == n) value[[1]] else NA
+  }
+  value
+}
+
+df.country[normalize_country("Viet nam"), ]
+```
+
