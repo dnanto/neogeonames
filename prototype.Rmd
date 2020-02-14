@@ -38,21 +38,25 @@ df.src <- read_tsv("data/sample/src.zip", col_types = cols(.default = "c")) %>% 
 country.letters <- paste(unique(strsplit(paste(df.country$country, collapse = ""), "")[[1]]), collapse = "")
 country.regex <- str_replace(country.letters, "-", "\\\\-") %>% paste0("[^", ., "]")
 
-normalize_country <- function(value, n = 1, ...)
+country.sanitize <- function(value) str_squish(str_replace_all(value, country.regex, " "))
+
+country.normalize <- function(query, n = 1, ...)
 {
-  # sanitize
-  # is exact match?
-  # is token an exact match?
-  # is token fuzzy match?
-  value <- str_remove_all(value, country.regex)
-  result <- value %in% df.country$country
-  if (!result) {
-    value <- agrep(value, df.country$country, ignore.case = T, ...)
-    value <- if (length(value) == n) value[[1]] else NA
+  i <- NA
+  
+  # exact
+  if (any(idx <- which(toupper(query) == df.country$iso))) i <- idx
+  else if (any(idx <- which(toupper(query) == df.country$iso3))) i <- idx
+  else if (any(idx <- which(query == df.country$country))) i <- idx
+  else
+  {
+    # fuzzy
+    results <- agrep(query, df.country$country, ignore.case = T, ...)
+    if (length(results <= n)) i <- results[[1]]
   }
-  value
+  
+  i
 }
 
-df.country[normalize_country("Viet nam"), ]
-```
-
+mutate(df.src, clean = sapply(country.sanitize(country), country.normalize))
+``` 
