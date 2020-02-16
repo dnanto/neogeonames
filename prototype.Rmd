@@ -13,9 +13,7 @@ col_names <- c(
   "modification_date"
 )
 df.city <- read_tsv("data/geonames/cities500.zip", col_names = col_names, col_types = "iccccccccccccciiccT")
-```
 
-```{r}
 col_names <- c(
   "iso", "iso3",	"iso_num", "fips", "country", "capital", "area",
   "population",	"continent", "tld",	"currency_code",
@@ -28,58 +26,121 @@ df.country <-
   filter(!startsWith(value, "#")) %>%
   pull(value) %>%
   read_tsv(col_names = col_names)
+
+df.admin.1 <- read_tsv(
+  "data/geonames/admin1CodesASCII.txt", 
+  col_names = c("code", "name", "name_ascii", "geonameid"),
+  col_types = "ccci"
+) %>% separate("code", c("iso", "lvl.1"), sep = "\\.", remove = F)
+df.admin.2 <- read_tsv(
+  "data/geonames/admin2Codes.txt",
+  col_names = c("code", "name", "name_ascii", "geonameid"),
+  col_types = "ccci"
+) %>% separate("code", c("iso", "lvl.1", "lvl.2"), sep = "\\.", remove = F)
 ```
 
 ```{r}
-df.src <- read_tsv("data/sample/src.zip", col_types = cols(.default = "c")) %>% distinct(country)
+df.src <- read_tsv("data/sample/src.zip", col_types = cols(.default = "c"))
+query <- sort(unique(df.src$country))
 ```
 
 ```{r}
 country.letters <- paste(unique(strsplit(paste(df.country$country, collapse = ""), "")[[1]]), collapse = "")
-country.regex <- str_replace(country.letters, "-", "\\\\-") %>% paste0("[^", ., "]")
-
+country.regex <- paste0("[^", str_replace(country.letters, "-", "\\\\-"), "]")
 country.sanitize <- function(value) str_squish(str_replace_all(value, country.regex, " "))
+```
 
-country.normalize <- function(query, n = 1, ...)
-{
-  i <- NA
-  
-  if (!is.na(query))
-  {
-    # exact
-    if (any(idx <- which(toupper(query) == df.country$iso))) i <- idx
-    else if (any(idx <- which(toupper(query) == df.country$iso3))) i <- idx
-    else if (any(idx <- which(query == df.country$country))) i <- idx
-    else
-    {
-      # fuzzy
-      results <- agrep(query, df.country$country, ignore.case = T, ...)
-      if (length(results <= n)) i <- results[[1]]
-    }
-    
-    # tokens
-    if (is.na(i) )
-    {
-      tokens <- str_split(query, " ")[[1]]
-      for (ele in tokens)
-      {
-        result <- country.normalize(ele)
-        if (!is.na(result)) 
-        {
-          i <- result
-          break
-        }
-      }
-    }
-  }
-  
-  i
-}
+```{r}
+is_iso <- function(val) any(toupper(val) == df.country$iso, na.rm = T)
+is_iso3 <- function(val) any(toupper(val) == df.country$iso3, na.rm = T)
+is_country <- function(val) any(val == df.country$country, na.rm = T)
 ```
 
 ```{r}
 country.sanitize.vec <- Vectorize(country.sanitize, c("value"), USE.NAMES = F)
-country.normalize.vec <- Vectorize(country.normalize, c("query"), USE.NAMES = F)
-x <- mutate(df.src, clean = df.country$country[country.normalize.vec(country.sanitize.vec(country))])
-x
 ```
+
+# country name  cn    "United States"  country
+# iso           cc2   "US"             country code
+# iso3          cc3   "USA"            country code
+# admin code 1  ac1   "US.VA"          state
+# admin code 1  ac1n   "Virginia"          state
+# admin code 2  ac2n   "US.VA.059"      county
+# admin code 2  ac2n   "Fairfax County"      county
+
+```{r}
+code <- c("cn", "cc2", "cc3", "ac1", "ac1n", "ac2", "ac2n") %>% setNames(seq_along(.), .)
+
+func <- list(
+  cn = countryfy,
+  ac1 = function(val) val
+)
+
+is.int0 <- function(x) identical(x, integer(0))
+
+countrify <- function(val, n = 1, max.distance = 0.1)
+{
+  cc2 <- NA
+  if (!is.int0(idx <- which(toupper(val) == df.country$iso))) cc2 <- df.country[[idx, "iso"]]
+  else if (!is.int0(idx <- which(toupper(val) == df.country$iso3))) cc2 <- df.country[[idx, "iso"]]
+  else if (!is.int0(idx <- which(val == df.country$country))) cc2 <- df.country[[idx, "iso"]]
+  else
+  {
+    idx <- agrep(val, df.country$country, ignore.case = T, max.distance = 0.1)
+    if (length(idx <= n)) cc2 <- df.country[[idx[[1]], "iso"]]
+  }
+  cc2
+}
+
+admin.codify.1 <- function(val, cc2 = NA, n = 1)
+{
+  ac1 <- NA
+  
+  df <- filter(df.admin.1, is.na(cc2) | iso == cc2)
+  
+  if (!is.int0(idx <- which(toupper(val) == df$lvl.1))) ac1 <- df[[idx, "code"]]
+  else if (!is.int0(idx <- which(val == df$name_ascii))) ac1 <- df[[idx, "code"]]
+  else
+  {
+    idx <- agrep(val, df$name_ascii, ignore.case = T, max.distance = 0.1)
+    if (length(idx <= n)) ac1 <- df[[idx[[1]], "code"]]
+  }
+
+  ac1
+}
+
+process_regx <- function(val, regx)
+{
+  tokens <- setNames(tail(str_match(val, regx$pattern)[1,], -1), regx$names)
+  
+  result <- list(cn = NA, ac1 = NA, ac2 = NA, ac3 = NA, ac4 = NA)
+  
+  if (!any(is.na(tokens)))
+  {
+    # process admin code hierarchy
+    for (name in names(sort(code[regx$names])))
+    {
+      if (name == "cn") result[[name]] <- countrify(tokens[[name]])
+      else if (name == "ac1")
+      {
+        result[[name]] <- admin.codify.1(tokens[[name]], cc2 = result$cn)
+      }
+    }
+  }
+  
+  result
+}
+
+process_regx("usa: GA", list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac1")))
+```
+
+```{r}
+x <- filter(df.src, startsWith(country, "USA"))
+
+pull(x, country) %>% 
+  lapply(process_regx, regx = list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac1"))) %>% 
+  bind_rows() %>% 
+  bind_cols(x, .) %>%
+  select(country, cn, ac1, ac2, ac3, ac4)
+```
+
