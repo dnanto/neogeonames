@@ -71,10 +71,6 @@ country.sanitize.vec <- Vectorize(country.sanitize, c("value"), USE.NAMES = F)
 ```{r}
 code <- c("cn", "cc2", "cc3", "ac1", "ac1n", "ac2", "ac2n") %>% setNames(seq_along(.), .)
 
-func <- list(
-  cn = countryfy,
-  ac1 = function(val) val
-)
 
 is.int0 <- function(x) identical(x, integer(0))
 
@@ -131,16 +127,33 @@ process_regx <- function(val, regx)
   result
 }
 
-process_regx("usa: GA", list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac1")))
+process_regx_list <- function(val, regx_list)
+{
+  result <- NA
+  for (regx in regx_list)
+  {
+    result <- process_regx(val, regx)
+    if (!all(is.na(result))) break;
+  }
+  result;
+}
+
+func <- list(
+  cn = countrify,
+  ac1 = function(val) val
+)
 ```
 
 ```{r}
-x <- filter(df.src, startsWith(country, "USA"))
+regx_list <- list(
+  list(pattern = "(.+)", names = c("cn")),
+  list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac1"))
+)
 
-pull(x, country) %>% 
-  lapply(process_regx, regx = list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac1"))) %>% 
+pull(df.src, country) %>% 
+  lapply(process_regx_list, regx_list = regx_list) %>% 
   bind_rows() %>% 
-  bind_cols(x, .) %>%
+  bind_cols(df.src) %>%
   select(country, cn, ac1, ac2, ac3, ac4)
 ```
 
