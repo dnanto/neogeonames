@@ -88,11 +88,11 @@ countrify <- function(val, n = 1, max.distance = 0.1)
   cc2
 }
 
-admin.codify.1 <- function(val, cc2 = NA, n = 1)
+admin.codify.1 <- function(val, cc2, n = 1)
 {
   ac1 <- NA
   
-  df <- filter(df.admin.1, is.na(cc2) | iso == cc2)
+  df <- filter(df.admin.1, iso == cc2)
   
   if (!is.int0(idx <- which(toupper(val) == df$lvl.1))) ac1 <- df[[idx, "code"]]
   else if (!is.int0(idx <- which(val == df$name_ascii))) ac1 <- df[[idx, "code"]]
@@ -105,7 +105,24 @@ admin.codify.1 <- function(val, cc2 = NA, n = 1)
   ac1
 }
 
-process_regx <- function(val, regx)
+admin.codify.2 <- function(val, n = 1, cc2, ac1)
+{
+  ac2 <- NA
+  
+  df <- filter(df.admin.2, iso == cc2 & lvl.1 == ac1)
+  
+  if (!is.int0(idx <- which(toupper(val) == df$lvl.2))) ac2 <- df[[idx, "code"]]
+  else if (!is.int0(idx <- which(val == df$name_ascii))) ac2 <- df[[idx, "code"]]
+  else
+  {
+    idx <- agrep(val, df$name_ascii, ignore.case = T, max.distance = 0.1)
+    if (length(idx <= n)) ac2 <- df[[idx[[1]], "code"]]
+  }
+
+  ac2
+}
+
+process_regx <- function(val, regx, n = 1)
 {
   tokens <- setNames(tail(str_match(val, regx$pattern)[1,], -1), regx$names)
   
@@ -116,10 +133,14 @@ process_regx <- function(val, regx)
     # process admin code hierarchy
     for (name in names(sort(code[regx$names])))
     {
-      if (name == "cn") result[[name]] <- countrify(tokens[[name]])
+      if (name == "cn") result[[name]] <- countrify(tokens[[name]], n = n)
       else if (name == "ac1")
       {
-        result[[name]] <- admin.codify.1(tokens[[name]], cc2 = result$cn)
+        result[[name]] <- admin.codify.1(tokens[[name]], cc2 = result$cn, n = n)
+      }
+      else if (name == "ac2")
+      {
+        result[[name]] <- admin.codify.2(tokens[[name]], cc2 = result$cn, ac1 = result$ac1, n = n)
       }
     }
   }
@@ -129,31 +150,29 @@ process_regx <- function(val, regx)
 
 process_regx_list <- function(val, regx_list)
 {
-  result <- NA
-  for (regx in regx_list)
-  {
-    result <- process_regx(val, regx)
-    if (!all(is.na(result))) break;
-  }
-  result;
+  coalesce(!!!lapply(regx_list, process_regx, val = val))
 }
-
-func <- list(
-  cn = countrify,
-  ac1 = function(val) val
-)
 ```
 
 ```{r}
 regx_list <- list(
   list(pattern = "(.+)", names = c("cn")),
-  list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac1"))
+  list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac1")),
+  list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac2")),
+  list(pattern = "(.+):\\s*(.+)\\s*,\\s*(.+)", names = c("cn", "ac1", "ac2"))
 )
 
-pull(df.src, country) %>% 
+x <- distinct(df.src, country)
+
+pull(x, country) %>% 
   lapply(process_regx_list, regx_list = regx_list) %>% 
   bind_rows() %>% 
-  bind_cols(df.src) %>%
-  select(country, cn, ac1, ac2, ac3, ac4)
+  bind_cols(x) %>%
+  select(country, cn, ac1, ac2, ac3, ac4) %>%
+  arrange(country)
+```
+
+```{r}
+"USA: CA,Los Angeles" %>% lapply(process_regx_list, regx_list = regx_list)
 ```
 
