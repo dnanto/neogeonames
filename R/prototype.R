@@ -1,15 +1,13 @@
-#!/usr/bin/env Rscript
-
-df.city <- read_tsv(
-  "data/geonames/cities500.zip", 
-  col_names = c(
-    "geonameid", "name", "asciiname", "alternatenames", "latitude", "longitude",  
-    "feature_class", "feature_code", "country_code", "cc2", 
-    "admin1_code", "admin2_code", "admin3_code", "admin4_code",
-    "population", "elevation", "dem", "timezone", "modification_date"
-  ), 
-  col_types = "iccccccccccccciiccT"
-)
+# df.city <- read_tsv(
+#   "data/geonames/cities500.zip",
+#   col_names = c(
+#     "geonameid", "name", "asciiname", "alternatenames", "latitude", "longitude",
+#     "feature_class", "feature_code", "country_code", "cc2",
+#     "admin1_code", "admin2_code", "admin3_code", "admin4_code",
+#     "population", "elevation", "dem", "timezone", "modification_date"
+#   ),
+#   col_types = "iccccccccccccciiccT"
+# )
 
 df.country <-
   read_lines("data/geonames/countryInfo.txt") %>%
@@ -24,7 +22,7 @@ df.country <-
   ))
 
 df.admin.1 <- read_tsv(
-  "data/geonames/admin1CodesASCII.txt", 
+  "data/geonames/admin1CodesASCII.txt",
   col_names = c("code", "name", "name_ascii", "geonameid"),
   col_types = "ccci"
 ) %>% separate("code", c("iso", "lvl.1"), sep = "\\.", remove = F)
@@ -66,10 +64,10 @@ codify.1 <- function(val, cc2 = NA, n = 1, max.distance = 0.1)
 {
   result <- NA
   val <- toupper(val)
-  
+
   df <- df.admin.1
   if (!is.na(cc2)) df <- filter(df, iso == cc2)
-  
+
   if (idx <- match(val, df$lvl.1, nomatch = F)) result <- df[[idx, "code"]]
   else if (idx <- match(val, toupper(df$name_ascii), nomatch = F)) result <- df[[idx, "code"]]
   else
@@ -77,7 +75,7 @@ codify.1 <- function(val, cc2 = NA, n = 1, max.distance = 0.1)
     idx <- agrep(val, df$name_ascii, ignore.case = T, max.distance = max.distance)
     if (!is.int0(idx) & length(idx) <= n) result <- df[[idx[[1]], "code"]]
   }
-  
+
   result
 }
 
@@ -85,11 +83,11 @@ codify.2 <- function(val, cc2 = NA, ac1 = NA, n = 1, max.distance = 0.1)
 {
   result <- NA
   val <- toupper(val)
-  
+
   df <- df.admin.2
   if (!is.na(cc2)) df <- filter(df, iso == cc2)
   if (!is.na(ac1)) df <- filter(df, iso == ac1)
-  
+
   if (idx <- match(val, df$lvl.2, nomatch = F)) result <- df[[idx, "code"]]
   else if (idx <- match(val, toupper(df$name_ascii), nomatch = F)) result <- df[[idx, "code"]]
   else
@@ -97,7 +95,7 @@ codify.2 <- function(val, cc2 = NA, ac1 = NA, n = 1, max.distance = 0.1)
     idx <- agrep(val, df$name_ascii, ignore.case = T, max.distance = max.distance)
     if (!is.int0(idx) & length(idx) <= n) result <- df[[idx[[1]], "code"]]
   }
-  
+
   result
 }
 
@@ -105,14 +103,14 @@ process_regx <- function(val, regx, n = 1)
 {
   tokens <- setNames(tail(str_match(val, regx$pattern)[1,], -1), regx$names)
   result <- list(cn = NA, ac1 = NA, ac2 = NA, ac3 = NA, ac4 = NA)
-  
+
   if (!any(is.na(tokens)))
   {
     # process admin code hierarchy
     for (name in names(sort(code[regx$names])))
     {
-      if (name == "cn") 
-      {  
+      if (name == "cn")
+      {
         result[[name]] <- countrify(tokens[[name]], n = n)
       }
       else if (name == "ac1")
@@ -125,7 +123,7 @@ process_regx <- function(val, regx, n = 1)
       }
     }
   }
-  
+
   result
 }
 

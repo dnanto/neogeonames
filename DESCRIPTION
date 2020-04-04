@@ -1,0 +1,9 @@
+Package: lubricity
+Title: Normalize and Sniff Place Names in R
+Version: 0.0.0.9000
+Authors@R: person("Daniel", "Negrón", email = "dnegron2@gmu.edu", role = c("aut", "cre"))
+Description: This package provides functions to extract and normalize place names according to administrative division.
+Depends: R (>= 3.5.1)
+License: MIT
+Encoding: UTF-8
+LazyData: true

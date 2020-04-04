@@ -1,6 +1,15 @@
+---
+title: "Normalize and Sniff Place Names in R"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Normalize and Sniff Place Names in R}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
 ```{r setup, include=F}
 library(tidyverse)
-source("prototype.R")
+source("R/lubricity.R")
 knitr::opts_chunk$set(echo = F)
 ```
 
