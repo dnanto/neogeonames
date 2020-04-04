@@ -100,3 +100,37 @@ codify.2 <- function(val, cc2 = NA, ac1 = NA, n = 1, max.distance = 0.1)
   
   result
 }
+
+process_regx <- function(val, regx, n = 1)
+{
+  tokens <- setNames(tail(str_match(val, regx$pattern)[1,], -1), regx$names)
+  result <- list(cn = NA, ac1 = NA, ac2 = NA, ac3 = NA, ac4 = NA)
+  
+  if (!any(is.na(tokens)))
+  {
+    # process admin code hierarchy
+    for (name in names(sort(code[regx$names])))
+    {
+      if (name == "cn") 
+      {  
+        result[[name]] <- countrify(tokens[[name]], n = n)
+      }
+      else if (name == "ac1")
+      {
+        result[[name]] <- codify.1(tokens[[name]], cc2 = result$cn, n = n)
+      }
+      else if (name == "ac2")
+      {
+        result[[name]] <- codify.2(tokens[[name]], cc2 = result$cn, ac1 = result$ac1, n = n)
+      }
+    }
+  }
+  
+  result
+}
+
+process_regx_list <- function(val, regx_list)
+{
+  coalesce(!!!lapply(regx_list, process_regx, val = val))
+}
+
