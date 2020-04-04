@@ -9,8 +9,8 @@ vignette: >
 
 ```{r setup, include=F}
 library(tidyverse)
-source("R/lubricity.R")
-knitr::opts_chunk$set(echo = F)
+library(lubricity)
+knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 ```
 
 # country name  cn    "United States"  country
@@ -33,7 +33,9 @@ codify.2("Fairfax Country")
 ```
 
 ```{r}
-df.src <- read_tsv("data/sample/src.zip", col_types = cols(.default = "c"))
+df.src <- 
+  system.file("extdata", "feature.tsv", package = "lubricity") %>%
+  read_tsv(col_types = cols(.default = "c"))
 query <- sort(unique(df.src$country))
 ```
 
@@ -52,7 +54,7 @@ regx_list <- list(
 
 x <- distinct(df.src, country)
 
-pull(x, country) %>% 
+pull(x, country) %>%
   lapply(process_regx_list, regx_list = regx_list) %>%
   bind_rows() %>%
   bind_cols(x, .) %>%
@@ -61,7 +63,7 @@ pull(x, country) %>%
 
 ```{r}
 process_regx_list(
-  "USA: Pittsburgh, Pennsylvania", 
+  "USA: Pittsburgh, Pennsylvania",
   regx_list = list(
     list(pattern = "(.+):\\s*.+,\\s*(.+)", names = c("cn", "ac1")),
     list(pattern = "(.+):\\s*(.+),", names = c("cn", "ac1")),

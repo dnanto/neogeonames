@@ -1,2 +1,5 @@
-library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(readr)
+library(tibble)
 geonames_install()
