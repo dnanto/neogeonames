@@ -17,7 +17,8 @@ process_regx_list(val, regx_list, ...)
 The list of extracted admin code names or \code{NA} for each name not found.
 }
 \description{
-This function essentially runs \code{process_regx} on each value.
+This function essentially runs \code{process_regx} with each regular expression on the value.
+This function also discards results with incorrectly inferred hierarchy.
 }
 \seealso{
 \code{\link{process_regx}}

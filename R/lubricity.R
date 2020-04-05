@@ -233,7 +233,8 @@ process_regx <- function(val, regx, ...)
 
 #' Calculate administrative division codes using a list of named regular expression lists.
 #'
-#' This function essentially runs \code{process_regx} on each value.
+#' This function essentially runs \code{process_regx} with each regular expression on the value.
+#' This function also discards results with incorrectly inferred hierarchy.
 #'
 #' @param val The query value.
 #' @param regx_list The list of named regular expression list objects.
@@ -243,5 +244,8 @@ process_regx <- function(val, regx, ...)
 #' @export
 process_regx_list <- function(val, regx_list, ...)
 {
-  coalesce(!!!lapply(regx_list, process_regx, val = val, ... = ...))
+  result <- coalesce(!!!lapply(regx_list, process_regx, val = val, ... = ...))
+  if(!startsWith(result$ac1, result$cn)) result$ac1 <- NA
+  if(!startsWith(result$ac2, result$ac1)) result$ac2 <- NA
+  result
 }
