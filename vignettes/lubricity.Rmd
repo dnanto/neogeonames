@@ -10,9 +10,9 @@ vignette: >
 ```{r setup, include=F}
 library(tidyverse)
 library(lubricity)
-knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 ```
 
+```{r test1}
 # country name  cn    "United States"  country
 # iso           cc2   "US"             country code
 # iso3          cc3   "USA"            country code
@@ -20,8 +20,6 @@ knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 # admin code 1  ac1n  "Virginia"       state
 # admin code 2  ac2n  "US.VA.059"      county
 # admin code 2  ac2n  "Fairfax County" county
-
-```{r}
 countrify("US")
 countrify("USA")
 countrify("United States")
@@ -32,14 +30,12 @@ codify.2("Fairfax County")
 codify.2("Fairfax Country")
 ```
 
-```{r}
+```{r test2}
 df.src <- 
   system.file("extdata", "feature.tsv", package = "lubricity") %>%
   read_tsv(col_types = cols(.default = "c"))
 query <- sort(unique(df.src$country))
-```
 
-```{r}
 regx_list <- list(
   list(pattern = "(.+)", names = c("cn")),
   list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac1")),
@@ -61,7 +57,7 @@ pull(x, country) %>%
   arrange(country)
 ```
 
-```{r}
+```{r test3}
 process_regx_list(
   "USA: Pittsburgh, Pennsylvania",
   regx_list = list(
