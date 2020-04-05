@@ -1,5 +1,5 @@
 ---
-title: "Normalize and Sniff Place Names in R"
+title: "Sniff and Normalize Place Names in R"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Normalize and Sniff Place Names in R}
