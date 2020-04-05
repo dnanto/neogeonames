@@ -194,9 +194,9 @@ codify.2 <- function(val, cc2 = NA, ac1 = NA, n = 1, ...)
 #' Calculate administrative division codes using a named regular expression.
 #'
 #' The regular expression names each group by the administrative division code.
-#' The function processes each group accoring to the division hierarchy, starting at the top.
+#' The function processes each group according to the division hierarchy, starting at the top.
 #' The function uses matches to higher levels as limiters if lower admin code groups are present in the regular expression.
-#' The admin code names include "cn", "ac2", and "ac2" corresponging to "country name", "admin code 1", and "admin code 2".
+#' The admin code names include "cn", "ac2", and "ac2" corresponding to "country name", "admin code 1", and "admin code 2".
 #'
 #' @param val The query value.
 #' @param regx The list object with a "pattern" and admin code "name" entry.
