@@ -205,8 +205,8 @@ codify.2 <- function(val, cc2 = NA, ac1 = NA, n = 1, ...)
 #' @export
 process_regx <- function(val, regx, ...)
 {
-  tokens <- stats::setNames(utils::tail(str_match(val, regx$pattern)[1,], -1), regx$name)
   result <- list(cn = NA, ac1 = NA, ac2 = NA)
+  tokens <- stats::setNames(utils::tail(str_match(val, regx$pattern)[1,], -1), regx$name)
 
   if (!any(is.na(tokens)))
   {
@@ -245,7 +245,7 @@ process_regx <- function(val, regx, ...)
 process_regx_list <- function(val, regx_list, ...)
 {
   result <- coalesce(!!!lapply(regx_list, process_regx, val = val, ... = ...))
-  if(!startsWith(result$ac1, result$cn)) result$ac1 <- NA
-  if(!startsWith(result$ac2, result$ac1)) result$ac2 <- NA
+  if(!any(is.na(c(result$cn, result$ac1))) && !startsWith(result$ac1, result$cn)) result$ac1 <- NA
+  if(!any(is.na(c(result$ac1, result$ac2))) && !startsWith(result$ac2, result$ac1)) result$ac2 <- NA
   result
 }

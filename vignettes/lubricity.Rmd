@@ -58,14 +58,6 @@ pull(x, country) %>%
 ```
 
 ```{r test3}
-process_regx_list <- function(val, regx_list, ...)
-{
-  result <- coalesce(!!!lapply(regx_list, process_regx, val = val, ... = ...))
-  if(!is.na(result$cn) & !startsWith(result$ac1, result$cn)) result$ac1 <- NAZ
-  if(!any(is.na(c(result$ac1, result$ac2))) && !startsWith(result$ac2, result$ac1)) result$ac2 <- NA
-  result
-}
-
 process_regx_list(
   "USA: Pittsburgh, Pennsylvania",
   regx_list = list(
