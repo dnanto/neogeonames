@@ -91,7 +91,7 @@ geonames_install <- function(url = "http://download.geonames.org/export/dump")
 code <- c("cn", "cc2", "cc3", "ac1", "ac1n", "ac2", "ac2n")
 code <- stats::setNames(seq_along(code), code)
 
-#' Helper function to test for equivalency to 0.
+#' Is the value equal to zero?
 #' @param val The value to test.
 #' @return The boolean result.
 #' @export
@@ -103,6 +103,13 @@ is.int0 <- function(val) identical(val, integer(0))
 # country.regex <- paste0("[^", str_replace(country.letters, "-", "\\\\-"), "]")
 # country.sanitize <- function(value) str_squish(str_replace_all(value, country.regex, " "))
 # sani.country <- country.sanitize.vec <- Vectorize(country.sanitize, c("value"), USE.NAMES = F)
+
+#' Is y a prefix of x?
+#' @param x The x value.
+#' @param y The y value.
+#' @return The boolean result.
+#' @export
+is.prefix <- function(x, y) !is.na(x) && !is.na(y) && startsWith(x, y)
 
 #' Calculate the corresponding ISO 3166-1 alpha-2 code for the given query..
 #'
@@ -234,7 +241,7 @@ process_regx <- function(val, regx, ...)
 #' Calculate administrative division codes using a list of named regular expression lists.
 #'
 #' This function essentially runs \code{process_regx} with each regular expression on the value.
-#' This function also discards results with incorrectly inferred hierarchy.
+#' This function also nullifies results with incorrectly inferred hierarchy.
 #'
 #' @param val The query value.
 #' @param regx_list The list of named regular expression list objects.
@@ -245,7 +252,32 @@ process_regx <- function(val, regx, ...)
 process_regx_list <- function(val, regx_list, ...)
 {
   result <- coalesce(!!!lapply(regx_list, process_regx, val = val, ... = ...))
-  if(!any(is.na(c(result$cn, result$ac1))) && !startsWith(result$ac1, result$cn)) result$ac1 <- NA
-  if(!any(is.na(c(result$ac1, result$ac2))) && !startsWith(result$ac2, result$ac1)) result$ac2 <- NA
+  if (!is.prefix(result$ac1, result$cn)) result$ac1 <- NA
+  if (!is.prefix(result$ac2, result$ac1)) result$ac2 <- NA
   result
+}
+
+#' Calculate administrative division codes by splitting on a delimiter pattern.
+#'
+#' This function infers an admin code for each token.
+#' This function also nullifies results with incorrectly inferred hierarchy.
+#'
+#' @param val The query value.
+#' @param pat The delimiter pattern.
+#' @param ... The arguments passed to \code{\link{countrify}}, \code{\link{codify.1}}, and \code{\link{codify.2}}.
+#' @seealso \code{\link{process_regx}}
+#' @return The list of extracted admin code names or \code{NA} for each name not found.
+#' @export
+process_delim <- function(val, pattern, ...)
+{
+  tokens <- str_trim(str_split(val, pattern, simplify = T))
+  cn <- NA
+  ac1 <- NA
+  ac2 <- NA
+  for (token in tokens) if (!is.na(cn <- countrify(token, ... = ...))) break
+  for (token in tokens) if (!is.na(ac1 <- codify.1(token, cc2 = cn, ... = ...))) break
+  for (token in tokens) if (!is.na(ac2 <- codify.2(token, cc2 = cn, ac1 = ac1, ... = ...))) break
+  if (!is.prefix(ac1, cn)) ac1 <- NA
+  if (!is.prefix(ac2, ac1)) ac2 <- NA
+  list(cn = cn, ac1 = ac1, ac2 = ac2)
 }

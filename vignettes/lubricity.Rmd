@@ -37,15 +37,10 @@ df.src <-
 query <- sort(unique(df.src$country))
 
 regx_list <- list(
-  list(pattern = "(.+)", names = c("cn")),
-  list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac1")),
-  # list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac2")),
-  list(pattern = "(.+):\\s*(.+),", names = c("cn", "ac1")),
-  # list(pattern = "(.+):\\s*(.+),", names = c("cn", "ac2")),
-  list(pattern = "(.+):\\s*.+,\\s*(.+)", names = c("cn", "ac1")),
-  # list(pattern = "(.+):\\s*.+,\\s*(.+)", names = c("cn", "ac2")),
-  list(pattern = "(.+):\\s*(.+)\\s*,\\s*(.+)", names = c("cn", "ac1", "ac2")),
-  list(pattern = "(.+):\\s*(.+)\\s*,\\s*(.+)", names = c("cn", "ac2", "ac1"))
+    list(pattern = "(.+)", names = c("cn")),
+    list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac1")),
+    list(pattern = "(.+):\\s*(.+),\\s*(.+)", names = c("cn", "ac1", "ac2")),
+    list(pattern = "(.+):\\s*(.+),\\s*(.+)", names = c("cn", "ac2", "ac1"))
 )
 
 x <- distinct(df.src, country)
@@ -58,6 +53,14 @@ pull(x, country) %>%
 ```
 
 ```{r test3}
+pull(x, country) %>%
+  lapply(process_delim, pattern = "[:,]") %>%
+  bind_rows() %>%
+  bind_cols(x, .) %>%
+  arrange(country)
+```
+
+```{r test4}
 process_regx_list(
   "USA: Pittsburgh, Pennsylvania",
   regx_list = list(
