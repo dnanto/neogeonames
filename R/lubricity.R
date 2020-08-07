@@ -6,6 +6,7 @@
 #' @docType package
 #' @name lubricity
 #' @importFrom dplyr %>%
+#' @importFrom stringr str_trim
 "_PACKAGE"
 
 #' Download the raw data from GeoNames Gazetteer.
