@@ -3,7 +3,7 @@ normalize/sniff place names
 
 note: experimental, check-out the vignette
 
-install: devtools::install_github("dnanto/lubricity")
+install: `devtools::install_github("dnanto/lubricity")`
 
 # data
 GeoNames Gazetteer sourced on April 04, 2020.
