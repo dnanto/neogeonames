@@ -20,5 +20,5 @@ The list of extracted admin code names or \code{NA} for each name not found.
 The regular expression names each group by the administrative division code.
 The function processes each group according to the division hierarchy, starting at the top.
 The function uses matches to higher levels as limiters if lower admin code groups are present in the regular expression.
-The admin code names include "cn", "ac2", and "ac2" corresponding to "country name", "admin code 1", and "admin code 2".
+The admin code names include "cc2", "ac2", and "ac2" corresponding to "country name", "admin code 1", and "admin code 2".
 }

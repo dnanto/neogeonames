@@ -13,13 +13,6 @@ library(lubricity)
 ```
 
 ```{r test1}
-# country name  cn    "United States"  country
-# iso           cc2   "US"             country code
-# iso3          cc3   "USA"            country code
-# admin code 1  ac1   "US.VA"          state
-# admin code 1  ac1n  "Virginia"       state
-# admin code 2  ac2n  "US.VA.059"      county
-# admin code 2  ac2n  "Fairfax County" county
 countrify("US")
 countrify("USA")
 countrify("United States")
@@ -37,10 +30,10 @@ df.src <-
 query <- sort(unique(df.src$country))
 
 regx_list <- list(
-    list(pattern = "(.+)", names = c("cn")),
-    list(pattern = "(.+):\\s*(.+)", names = c("cn", "ac1")),
-    list(pattern = "(.+):\\s*(.+),\\s*(.+)", names = c("cn", "ac1", "ac2")),
-    list(pattern = "(.+):\\s*(.+),\\s*(.+)", names = c("cn", "ac2", "ac1"))
+    list(pattern = "(.+)", names = c("cc2")),
+    list(pattern = "(.+):\\s*(.+)", names = c("cc2", "ac1")),
+    list(pattern = "(.+):\\s*(.+),\\s*(.+)", names = c("cc2", "ac1", "ac2")),
+    list(pattern = "(.+):\\s*(.+),\\s*(.+)", names = c("cc2", "ac2", "ac1"))
 )
 
 x <- distinct(df.src, country)
@@ -58,16 +51,4 @@ pull(x, country) %>%
   bind_rows() %>%
   bind_cols(x, .) %>%
   arrange(country)
-```
-
-```{r test4}
-process_regx_list(
-  "USA: Pittsburgh, Pennsylvania",
-  regx_list = list(
-    list(pattern = "(.+):\\s*(.+),\\s*(.+)", names = c("cn", "ac2", "ac1")),
-    list(pattern = "(.+):\\s*.+,\\s*(.+)", names = c("cn", "ac1")),
-    list(pattern = "(.+):\\s*(.+),", names = c("cn", "ac1")),
-    list(pattern = "(.+):\\s*(.+),", names = c("cn", "ac2"))
-  )
-)
 ```

@@ -90,7 +90,7 @@ geonames_install <- function(url = "http://download.geonames.org/export/dump")
   null <- file.remove(result)
 }
 
-code <- c("cn", "cc2", "cc3", "ac1", "ac1n", "ac2", "ac2n")
+code <- c("cc2", "cc3", "ac1", "ac1n", "ac2", "ac2n")
 code <- stats::setNames(seq_along(code), code)
 
 #' Is the value equal to zero?
@@ -205,7 +205,7 @@ codify.2 <- function(val, cc2 = NA, ac1 = NA, n = 1, ...)
 #' The regular expression names each group by the administrative division code.
 #' The function processes each group according to the division hierarchy, starting at the top.
 #' The function uses matches to higher levels as limiters if lower admin code groups are present in the regular expression.
-#' The admin code names include "cn", "ac2", and "ac2" corresponding to "country name", "admin code 1", and "admin code 2".
+#' The admin code names include "cc2", "ac2", and "ac2" corresponding to "country name", "admin code 1", and "admin code 2".
 #'
 #' @param val The query value.
 #' @param regx The list object with a "pattern" and admin code "name" entry.
@@ -214,7 +214,7 @@ codify.2 <- function(val, cc2 = NA, ac1 = NA, n = 1, ...)
 #' @export
 process_regx <- function(val, regx, ...)
 {
-  result <- list(cn = NA, ac1 = NA, ac2 = NA)
+  result <- list(cc2 = NA, ac1 = NA, ac2 = NA)
   tokens <- stats::setNames(utils::tail(str_match(val, regx$pattern)[1,], -1), regx$name)
 
   if (!any(is.na(tokens)))
@@ -222,17 +222,17 @@ process_regx <- function(val, regx, ...)
     # process admin code hierarchy
     for (name in names(sort(code[regx$name])))
     {
-      if (name == "cn")
+      if (name == "cc2")
       {
         result[[name]] <- countrify(tokens[[name]], ...)
       }
       else if (name == "ac1")
       {
-        result[[name]] <- codify.1(tokens[[name]], cc2 = result$cn, ...)
+        result[[name]] <- codify.1(tokens[[name]], cc2 = result$cc2, ...)
       }
       else if (name == "ac2")
       {
-        result[[name]] <- codify.2(tokens[[name]], cc2 = result$cn, ac1 = result$ac1, ...)
+        result[[name]] <- codify.2(tokens[[name]], cc2 = result$cc2, ac1 = result$ac1, ...)
       }
     }
   }
@@ -254,7 +254,7 @@ process_regx <- function(val, regx, ...)
 process_regx_list <- function(val, regx_list, ...)
 {
   result <- coalesce(!!!lapply(regx_list, process_regx, val = val, ... = ...))
-  if (!is.prefix(result$ac1, result$cn)) result$ac1 <- NA
+  if (!is.prefix(result$ac1, result$cc2)) result$ac1 <- NA
   if (!is.prefix(result$ac2, result$ac1)) result$ac2 <- NA
   result
 }
@@ -273,13 +273,10 @@ process_regx_list <- function(val, regx_list, ...)
 process_delim <- function(val, pattern, ...)
 {
   tokens <- str_trim(str_split(val, pattern, simplify = T))
-  cn <- NA
-  ac1 <- NA
-  ac2 <- NA
-  for (token in tokens) if (!is.na(cn <- countrify(token, ... = ...))) break
-  for (token in tokens) if (!is.na(ac1 <- codify.1(token, cc2 = cn, ... = ...))) break
-  for (token in tokens) if (!is.na(ac2 <- codify.2(token, cc2 = cn, ac1 = ac1, ... = ...))) break
-  if (!is.prefix(ac1, cn)) ac1 <- NA
+  for (token in tokens) if (!is.na(cc2 <- countrify(token, ... = ...))) break
+  for (token in tokens) if (!is.na(ac1 <- codify.1(token, cc2 = cc2, ... = ...))) break
+  for (token in tokens) if (!is.na(ac2 <- codify.2(token, cc2 = cc2, ac1 = ac1, ... = ...))) break
+  if (!is.prefix(ac1, cc2)) ac1 <- NA
   if (!is.prefix(ac2, ac1)) ac2 <- NA
-  list(cn = cn, ac1 = ac1, ac2 = ac2)
+  list(cc2 = cc2, ac1 = ac1, ac2 = ac2)
 }
