@@ -6,6 +6,7 @@
 #' @docType package
 #' @name lubricity
 #' @importFrom dplyr %>%
+#' @importFrom stringr str_split
 #' @importFrom stringr str_trim
 "_PACKAGE"
 
