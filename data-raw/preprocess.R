@@ -1,12 +1,17 @@
 #' Download and install the GeoNames Gazetteer data.
-#' @param dest The directory to download the files to.
+#' No download occurs if the file already exists.
+#' @param burl The base url to download the "countryInfo.txt" and "allCountries.zip" files.
 #' @return The data frame.
-geonames_install <- function(dest = getwd())
+geonames_install <- function(burl = "http://download.geonames.org/export/dump")
 {
-  url <- "http://download.geonames.org/export/dump/countryInfo.txt"
-  destfile <- file.path(dest, basename(url))
-  cat("download:", url, "->", destfile, "\n")
-  utils::download.file(url, destfile)
+  # download country
+  url <- paste(burl, "countryInfo.txt", sep="/")
+  destfile <- file.path(getwd(), basename(url))
+  if (!file.exists(destfile))
+  {
+    cat("download:", url, "->", destfile, "\n")
+    utils::download.file(url, destfile)
+  }
 
   # read country
   fields.country <- c(
@@ -30,11 +35,14 @@ geonames_install <- function(dest = getwd())
     col_types = paste(fields.country, collapse = "")
   )
 
-  # download geoname
-  url <- "http://download.geonames.org/export/dump/allCountries.zip"
-  destfile <- file.path(dest, basename(url))
-  cat("download:", url, "->", destfile, "\n")
-  utils::download.file(url, destfile)
+  # download country
+  url <- paste(burl, "allCountries.zip", sep="/")
+  destfile <- file.path(getwd(), basename(url))
+  if (!file.exists(destfile))
+  {
+    cat("download:", url, "->", destfile, "\n")
+    utils::download.file(url, destfile)
+  }
 
   # read geoname
   fields.geoname <- c(
@@ -48,17 +56,20 @@ geonames_install <- function(dest = getwd())
     modification_date = "D"
   )
   cat("read...\n")
-  fcode <- c(
+  feature_codes <- c(
+    # A country, state, region,...
     "ADM1", "ADM1H", "ADM2", "ADM2H", "ADM3", "ADM3H", "ADM4", "ADM4H",
-    "PCLD", "PCLF", "TERR",
-    "PPLA", "PPLA2", "PPLA3", "PPLA4", "PPLC", "PPLCH"
+    "PCL", "PCLD", "PCLF", "PCLH", "PCLI", "PCLS", "TERR",
+    # P city, village,...
+    "PPLA", "PPLA2", "PPLA3", "PPLA4", "PPLC"
   )
   geoname <- readr::read_tsv_chunked(
     destfile,
-    readr::DataFrameCallback$new(function(x, pos) x[x$feature_code %in% fcode, ]),
+    readr::DataFrameCallback$new(function(x, pos) x[x$feature_code %in% feature_codes, ]),
     chunk_size = 1000000,
     col_names = names(fields.geoname),
-    col_types = paste(fields.geoname, collapse = "")
+    col_types = paste(fields.geoname, collapse = ""),
+    quote = ""
   )
 
   cat("compress...\n")

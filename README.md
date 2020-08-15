@@ -7,6 +7,5 @@ install: `devtools::install_github("dnanto/lubricity")`
 
 # data
 
-GeoNames Gazetteer Data: http://download.geonames.org/export/dump/
-
-GeoNames Gazetteer License: https://creativecommons.org/licenses/by/4.0/
+- [GeoNames Gazetteer Data](http://download.geonames.org/export/dump/)
+- [GeoNames Gazetteer Data License](https://creativecommons.org/licenses/by/4.0/)

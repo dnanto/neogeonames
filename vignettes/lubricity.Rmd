@@ -13,7 +13,8 @@ library(lubricity)
 
 ```{r}
 df <- read.delim(system.file("extdata", "feature.tsv", package = "lubricity"))
-df.country <- unique(df$country)
-df.country <- lapply(unique(df$country), adminify_delim, delim = "[:,]")
-data.frame(do.call(rbind, df.country))
+countries <- unique(df$country)
+df.country <- lapply(countries, adminify_delim, delim = "[:,]")
+df.country <- data.frame(country = countries, do.call(rbind, df.country))
+df.country[order(df.country$country), ]
 ```
