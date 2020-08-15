@@ -2,21 +2,24 @@
 % Please edit documentation in R/lubricity.R
 \name{countrify}
 \alias{countrify}
-\title{Calculate the corresponding ISO 3166-1 alpha-2 code for the given query..}
+\title{Calculate the corresponding row in the country table for the given query.}
 \usage{
-countrify(val, n = 1, ...)
+countrify(query, n = 1, ...)
 }
 \arguments{
-\item{val}{The country name query.}
+\item{query}{The country name query.}
 
-\item{n}{The number of allowable fuzzy search results before returning the top result, otherwise return nothing if exceeded.}
+\item{n}{The number of allowable fuzzy search results before returning the top result, otherwise nothing.}
 
-\item{...}{The arguments for \code{\link{agrep}}.}
+\item{...}{The parameters for \code{\link{agrep}}.}
 }
 \value{
-The ISO 3166-1 alpha-2 code or \code{NA}.
+The rows or \code{data.frame} with 0 rows.
 }
 \description{
-The function performs a case-insensitive search for an exact match to the country name or ISO codes.
+The function performs a case-insensitive search for matches to ISO codes or country name.
 It also performs a fuzzy search using \code{\link{agrep}} as a fall back.
+}
+\seealso{
+\code{\link{agrep}}
 }

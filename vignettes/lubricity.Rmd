@@ -8,47 +8,12 @@ vignette: >
 ---
 
 ```{r setup, include=F}
-library(tidyverse)
 library(lubricity)
 ```
 
-```{r test1}
-countrify("US")
-countrify("USA")
-countrify("United States")
-countrify("Vietnam")
-countrify("Viet Nam")
-codify.1("Virginia")
-codify.2("Fairfax County")
-codify.2("Fairfax Country")
-```
-
-```{r test2}
-df.src <- 
-  system.file("extdata", "feature.tsv", package = "lubricity") %>%
-  read_tsv(col_types = cols(.default = "c"))
-query <- sort(unique(df.src$country))
-
-regx_list <- list(
-    list(pattern = "(.+)", names = c("cc2")),
-    list(pattern = "(.+):\\s*(.+)", names = c("cc2", "ac1")),
-    list(pattern = "(.+):\\s*(.+),\\s*(.+)", names = c("cc2", "ac1", "ac2")),
-    list(pattern = "(.+):\\s*(.+),\\s*(.+)", names = c("cc2", "ac2", "ac1"))
-)
-
-x <- distinct(df.src, country)
-
-pull(x, country) %>%
-  lapply(process_regx_list, regx_list = regx_list) %>%
-  bind_rows() %>%
-  bind_cols(x, .) %>%
-  arrange(country)
-```
-
-```{r test3}
-pull(x, country) %>%
-  lapply(process_delim, pattern = "[:,]") %>%
-  bind_rows() %>%
-  bind_cols(x, .) %>%
-  arrange(country)
+```{r}
+df <- read.delim(system.file("extdata", "feature.tsv", package = "lubricity"))
+df.country <- unique(df$country)
+df.country <- lapply(unique(df$country), adminify_delim, delim = "[:,]")
+data.frame(do.call(rbind, df.country))
 ```

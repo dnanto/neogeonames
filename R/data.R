@@ -1,44 +1,59 @@
-#' Country data...
+#' The country data...
 #'
 #' A dataset containing country information.
 #'
-#' @format A data frame with 252 rows and 3 variables:
+#' @format A data frame with 252 rows and 19 variables:
 #' \describe{
-#'   \item{iso}{ISO 3166-1 alpha-2 code}
-#'   \item{iso3}{ISO 3166-1 alpha-3 code}
-#'   \item{name}{name}
+#'	 \item{iso}{iso}
+#'	 \item{iso3}{iso3}
+#'	 \item{iso_numeric}{iso_numeric}
+#'	 \item{fips}{fips}
+#'	 \item{country}{country}
+#'	 \item{capital}{capital}
+#'	 \item{area}{area}
+#'	 \item{population}{population}
+#'	 \item{continent}{continent}
+#'	 \item{tld}{tld}
+#'	 \item{currency_code}{currency_code}
+#'	 \item{currency_name}{currency_name}
+#'	 \item{phone}{phone}
+#'	 \item{postal_code_format}{postal_code_format}
+#'	 \item{postal_code_regex}{postal_code_regex}
+#'	 \item{languages}{languages}
+#'	 \item{geonameid}{geonameid}
+#'	 \item{neighbours}{neighbours}
+#'	 \item{equivalent_fips_code}{equivalent_fips_code}
 #'   ...
 #' }
 #' @source \url{http://download.geonames.org/export/dump/countryInfo.txt}
 "country"
 
-#' Administrative division 1 data...
+#' The geoname data...
 #'
 #' A dataset containing administrative division 1 data.
 #'
-#' @format A data frame with 3956 rows and 4 variables:
+#' @format A data frame with 400189 rows and 19 columns
 #' \describe{
-#'   \item{code}{concatenated admin code}
-#'   \item{iso}{ISO 3166-1 alpha-2 code}
-#'   \item{lvl.1}{level 1 admin subdivision code}
-#'   \item{name}{name}
+#'	 \item{geonameid}{geonameid}
+#'	 \item{name}{name}
+#'	 \item{asciiname}{asciiname}
+#'	 \item{alternatenames}{alternatenames}
+#'	 \item{latitude}{latitude}
+#'	 \item{longitude}{longitude}
+#'	 \item{feature_class}{feature_class}
+#'	 \item{feature_code}{feature_code}
+#'	 \item{country_code}{country_code}
+#'	 \item{cc2}{cc2}
+#'	 \item{admin1_code}{admin1_code}
+#'	 \item{admin2_code}{admin2_code}
+#'	 \item{admin3_code}{admin3_code}
+#'	 \item{admin4_code}{admin4_code}
+#'	 \item{population}{population}
+#'	 \item{elevation}{elevation}
+#'	 \item{dem}{dem}
+#'	 \item{timezone}{timezone}
+#'	 \item{modification_date}{modification_date}
 #'   ...
 #' }
-#' @source \url{http://download.geonames.org/export/dump/admin1CodesASCII.txt}
-"admin1"
-
-#' Administrative division 2 data...
-#'
-#' A dataset containing administrative division 2 data.
-#'
-#' @format A data frame with 44737 rows and 5 variables:
-#' \describe{
-#'   \item{code}{concatenated admin code}
-#'   \item{iso}{ISO 3166-1 alpha-2 code}
-#'   \item{lvl.1}{level 1 admin subdivision code}
-#'   \item{lvl.2}{level 2 admin subdivision code}
-#'   \item{name}{name}
-#'   ...
-#' }
-#' @source \url{http://download.geonames.org/export/dump/admin2Codes.txt}
-"admin2"
+#' @source \url{http://download.geonames.org/export/dump/allCountries.zip}
+"geoname"

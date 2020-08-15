@@ -8,7 +8,7 @@
 \description{
 lubricity: Sniff and Normalize Place Names in R
 
-This package provides functions to extract and normalize place names according to administrative division.
+This package provides a subset of GeoNames Gazetteer data and normalization functions.
 }
 \author{
 \strong{Maintainer}: Daniel Negrón \email{dnegron2@gmu.edu}

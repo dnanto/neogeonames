@@ -1,200 +1,162 @@
 #' @description
 #' lubricity: Sniff and Normalize Place Names in R
 #'
-#' This package provides functions to extract and normalize place names according to administrative division.
+#' This package provides a subset of GeoNames Gazetteer data and normalization functions.
 #'
 #' @docType package
 #' @name lubricity
-#' @importFrom dplyr %>%
-#' @importFrom stringr str_split
-#' @importFrom stringr str_trim
 "_PACKAGE"
 
-#' Download the raw data from GeoNames Gazetteer.
+#' Feature codes.
+#' @export
+fcode <- c(
+  "ADM1", "ADM1H", "ADM2", "ADM2H", "ADM3", "ADM3H", "ADM4", "ADM4H",
+  "PCLD", "PCLF", "TERR",
+  "PPLA", "PPLA2", "PPLA3", "PPLA4", "PPLC", "PPLCH"
+)
+
+#' Named regex code to feature admin code.
+#' @export
+rcode <- c(
+  ac1 = "ADM1",
+  ac2 = "ADM2",
+  ac3 = "ADM3",
+  ac4 = "ADM4"
+)
+
+#' Named regex code to admin column code.
+#' @export
+ccode <- c(
+  ac0 = "country_code",
+  ac1 = "admin1_code",
+  ac2 = "admin2_code",
+  ac3 = "admin3_code",
+  ac4 = "admin4_code"
+)
+
+#' Calculate the corresponding row in the country table for the given query.
 #'
-#' Download the countryInfo.txt, admin1CodesASCII.txt, and admin2Codes.txt files.
-#'
-#' @param root The root directory to download the files to.
-#' @param url The base url to download the files from.
-#' @return Returns a character vector of the downloaded paths named by the file name.
-#' @export
-geonames_download <- function(root = getwd(), url = "http://download.geonames.org/export/dump")
-{
-  c("countryInfo.txt", "admin1CodesASCII.txt", "admin2Codes.txt") %>%
-    sapply(function(target) {
-      dest <- file.path(root, target)
-      utils::download.file(file.path(url, target), dest)
-      dest
-    })
-}
-
-#' Read the raw data from the country text file.
-#' @param path The path to the file.
-#' @return The data frame.
-#' @export
-geonames_read_country <- function(path)
-{
-  read_lines(path) %>%
-    enframe(name = NULL) %>%
-    dplyr::filter(!startsWith(value, "#")) %>%
-    pull(value) %>%
-    read_tsv(col_names = c(
-      "iso", "iso3",	"iso_num", "fips", "country", "capital", "area", "population","continent",
-      "tld",	"currency_code", "currency_name", "phone", "postal_code_format", "postal_code_regex",
-      "languages", "geonameid", "neighbours", "equivalent_fips_code"
-    ))
-}
-
-#' Read the raw data from the level 1 admin code text file.
-#' @param path The path to the file.
-#' @return The data frame.
-#' @export
-geonames_read_admin_1 <- function(path)
-{
-  read_tsv(path, col_names = c("code", "name", "name_ascii", "geonameid"), col_types = "ccci")
-}
-
-#' Read the raw data from the level 2 admin code text file.
-#' @param path The path to the file.
-#' @return The data frame.
-#' @export
-geonames_read_admin_2 <- function(path)
-{
-  read_tsv(path, col_names = c("code", "name", "name_ascii", "geonameid"), col_types = "ccci")
-}
-
-#' Download and install the GeoNames Gazetteer data.
-#' @param url The base url to download the files from.
-#' @return The data frame.
-#' @export
-geonames_install <- function(url = "http://download.geonames.org/export/dump")
-{
-  result <- geonames_download(url = url)
-  country <-
-    geonames_read_country(result["countryInfo.txt"]) %>%
-    rename(name = country) %>%
-    select(iso, iso3, name)
-  admin1 <-
-    geonames_read_admin_1(result["admin1CodesASCII.txt"]) %>%
-    select(-name) %>%
-    rename(name = name_ascii) %>%
-    separate("code", c("iso", "lvl.1"), sep = "\\.", remove = F) %>%
-    select(code, iso, lvl.1, name)
-  admin2 <-
-    geonames_read_admin_2(result["admin2Codes.txt"]) %>%
-    select(-name) %>%
-    rename(name = name_ascii) %>%
-    separate("code", c("iso", "lvl.1", "lvl.2"), sep = "\\.", remove = F) %>%
-    select(code, iso, lvl.1, lvl.2, name)
-  usethis::use_data(country, admin1, admin2, overwrite = T, compress = "xz", version = 3)
-  null <- file.remove(result)
-}
-
-code <- c("cc2", "cc3", "ac1", "ac1n", "ac2", "ac2n")
-code <- stats::setNames(seq_along(code), code)
-
-#' Is the value equal to zero?
-#' @param val The value to test.
-#' @return The boolean result.
-#' @export
-is.int0 <- function(val) identical(val, integer(0))
-# is.iso <- function(val) any(toupper(val) == country$iso, na.rm = T)
-# is.iso3 <- function(val) any(toupper(val) == country$iso3, na.rm = T)
-# is.country <- function(val) any(val == country$name, na.rm = T)
-# country.letters <- paste(unique(strsplit(paste(country$name, collapse = ""), "")[[1]]), collapse = "")
-# country.regex <- paste0("[^", str_replace(country.letters, "-", "\\\\-"), "]")
-# country.sanitize <- function(value) str_squish(str_replace_all(value, country.regex, " "))
-# sani.country <- country.sanitize.vec <- Vectorize(country.sanitize, c("value"), USE.NAMES = F)
-
-#' Is y a prefix of x?
-#' @param x The x value.
-#' @param y The y value.
-#' @return The boolean result.
-#' @export
-is.prefix <- function(x, y) !is.na(x) && !is.na(y) && startsWith(x, y)
-
-#' Calculate the corresponding ISO 3166-1 alpha-2 code for the given query..
-#'
-#' The function performs a case-insensitive search for an exact match to the country name or ISO codes.
+#' The function performs a case-insensitive search for matches to ISO codes or country name.
 #' It also performs a fuzzy search using \code{\link{agrep}} as a fall back.
 #'
-#' @param val The country name query.
-#' @param n The number of allowable fuzzy search results before returning the top result, otherwise return nothing if exceeded.
-#' @param ... The arguments for \code{\link{agrep}}.
-#' @return The ISO 3166-1 alpha-2 code or \code{NA}.
+#' @param query The country name query.
+#' @param n The number of allowable fuzzy search results before returning the top result, otherwise nothing.
+#' @param ... The parameters for \code{\link{agrep}}.
+#' @seealso \code{\link{agrep}}
+#' @return The rows or \code{data.frame} with 0 rows.
 #' @export
-countrify <- function(val, n = 1, ...)
+countrify <- function(query, n = 1, ...)
 {
-  result <- NA
-  val <- toupper(val)
-  if (idx <- match(val, country$iso, nomatch = F)) result <- country[[idx, "iso"]]
-  else if (idx <- match(val, country$iso3, nomatch = F)) result <- country[[idx, "iso"]]
-  else if (idx <- match(val, toupper(country$name), nomatch = F)) result <- country[[idx, "iso"]]
+  idx <- NULL
+
+  query <- toupper(query)
+
+  # check ISO 3166-1 alpha-2 code
+  if (idx.m <- match(query, toupper(lubricity::country$iso), nomatch = F))
+    idx <- idx.m
+  # check ISO 3166-1 alpha-3 code
+  else if (idx.m <- match(query, toupper(lubricity::country$iso3), nomatch = F))
+    idx <- idx.m
+  # check country name
+  else if (idx.m <- match(query, toupper(lubricity::country$country), nomatch = F))
+    idx <- idx.m
+  # fuzzy search
   else
   {
-    idx <- agrep(val, country$name, ignore.case = T, ...)
-    if (!is.int0(idx) & length(idx) <= n) result <- country[[idx[[1]], "iso"]]
-  }
-  result
-}
-
-#' Calculate the corresponding level 1 admin code for the given query.
-#'
-#' The function performs a case-insensitive search for an exact match to the country name or ISO codes.
-#' It also performs a fuzzy search using \code{\link{agrep}} as a fall back.
-#'
-#' @param val The query, which corresponds to the level of a state (in the United States for example).
-#' @param cc2 The ISO 3166-1 alpha-2 code to limit the query.
-#' @param n The number of allowable fuzzy search results before returning the top result, otherwise return nothing if exceeded.
-#' @param ... The arguments for \code{\link{agrep}}.
-#' @return The level 1 admin code or \code{NA}.
-#' @export
-codify.1 <- function(val, cc2 = NA, n = 1, ...)
-{
-  result <- NA
-  val <- toupper(val)
-
-  df <- admin1
-  if (!is.na(cc2)) df <- dplyr::filter(df, iso == cc2)
-
-  if (idx <- match(val, df$lvl.1, nomatch = F)) result <- df[[idx, "code"]]
-  else if (idx <- match(val, toupper(df$name), nomatch = F)) result <- df[[idx, "code"]]
-  else
-  {
-    idx <- agrep(val, df$name, ignore.case = T, ...)
-    if (!is.int0(idx) & length(idx) <= n) result <- df[[idx[[1]], "code"]]
+    idx.m <- agrep(query, lubricity::country$country, ignore.case = T, ...)
+    if (!identical(idx.m, integer(0)) & length(idx.m) <= n)
+      idx <- idx.m[[1]]
   }
 
-  result
+  lubricity::country[idx, ]
 }
 
-#' Calculate the corresponding level 2 admin code for the given query.
+#' Calculate the corresponding \code{\link{geoname}} rows for the asciiname query.
 #'
-#' The function performs a case-insensitive search for an exact match to the country name or ISO codes.
-#' It also performs a fuzzy search using \code{\link{agrep}} as a fall back.
-#'
-#' @param val The query, which corresponds to the level of a state (in the United States for example).
-#' @param cc2 The ISO 3166-1 alpha-2 code to limit the query.
-#' @param ac1 The level 1 admin code to limit the query.
+#' @param query The query.
+#' @param where The named vector of values analogous to the SQL "WHERE" clause.
 #' @param n The number of allowable fuzzy search results before returning the top result, otherwise return nothing if exceeded.
-#' @param ... The arguments for \code{\link{agrep}}.
-#' @return The level 2 admin code or \code{NA}.
+#' @param ... The parameters for \code{\link{agrep}}.
+#' @seealso \code{\link{agrep}}
+#' @return The rows or \code{data.frame} with 0 rows.
 #' @export
-codify.2 <- function(val, cc2 = NA, ac1 = NA, n = 1, ...)
+geonamify <- function(query, where = NULL, n = 1, ...)
 {
-  result <- NA
-  val <- toupper(val)
+  query <- toupper(query)
 
-  df <- admin2
-  if (!is.na(cc2)) df <- dplyr::filter(df, iso == cc2)
-  if (!is.na(ac1)) df <- dplyr::filter(df, iso == ac1)
+  # select table
+  df <- lubricity::geoname
 
-  if (idx <- match(val, df$lvl.2, nomatch = F)) result <- df[[idx, "code"]]
-  else if (idx <- match(val, toupper(df$name), nomatch = F)) result <- df[[idx, "code"]]
-  else
+  # where ...
+  if (!is.null(where))
+    for (key in names(where))
+      if (nrow(df) > 0)
+        df <- df[which(df[key] == where[key]), ]
+
+  # where asciiname
+  df.x <- df[toupper(df$asciiname) == query, ]
+
+  # asciiname like ...
+  if (nrow(df.x) == 0)
   {
-    idx <- agrep(val, df$name, ignore.case = T, ...)
-    if (!is.int0(idx) & length(idx) <= n) result <- df[[idx[[1]], "code"]]
+    idx <- agrep(query, df$asciiname, ignore.case = T, ...)
+    if (!identical(idx, integer(0)) & length(idx) <= n)
+      df.x <- df[idx[[1]], ]
+  }
+
+  df.x
+}
+
+#' Calculate administrative division codes by splitting on a delimiter pattern.
+#'
+#' This function infers an admin code for each token.
+#'
+#' @param query The query.
+#' @param delim The delimiter pattern.
+#' @param ... The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.
+#' @seealso \code{\link{geonamify}}
+#' @return The list of extracted admin code names or \code{NA} for each name not found.
+#' @export
+adminify_delim <- function(query, delim, ...)
+{
+  result <- sapply(ccode, function(ele) NA)
+  tokens <- stringr::str_trim(stringr::str_split(query, delim, simplify = T))
+  tokens <- Filter(nchar, tokens)
+  tokens <- tokens[!is.na(tokens)]
+
+  # countrify
+  idx <- 0
+  for (idx in seq_along(tokens))
+  {
+    if (!identical(ele <- countrify(tokens[idx], ...)$iso, character(0)))
+    {
+      result[["ac0"]] <- ele
+      break
+    }
+  }
+
+  # remove identified token
+  if (!is.null(idx) && idx > 0)
+    tokens <- tokens[-idx]
+
+  # geonamify
+  for (key in names(rcode))
+  {
+    if (is.na(result[[key]]))
+    {
+      idx <- 0
+      for (idx in seq_along(tokens))
+      {
+        params <- c(feature_code = rcode[[key]], Filter(length, stats::setNames(result, ccode)))
+        params <- Filter(Negate(is.na), params)
+        ele <- geonamify(tokens[idx], params, ...)[[ccode[key]]]
+        if (!identical(ele, character(0)))
+          result[[key]] <- ele
+      }
+      # remove identified token
+      if (!is.null(idx) && idx > 0)
+        tokens <- tokens[-idx]
+    }
   }
 
   result
@@ -207,76 +169,45 @@ codify.2 <- function(val, cc2 = NA, ac1 = NA, n = 1, ...)
 #' The function uses matches to higher levels as limiters if lower admin code groups are present in the regular expression.
 #' The admin code names include "cc2", "ac2", and "ac2" corresponding to "country name", "admin code 1", and "admin code 2".
 #'
-#' @param val The query value.
-#' @param regx The list object with a "pattern" and admin code "name" entry.
-#' @param ... The arguments passed to \code{\link{countrify}}, \code{\link{codify.1}}, and \code{\link{codify.2}}.
-#' @return The list of extracted admin code names or \code{NA} for each name not found.
+#' @param query The query.
+#' @param regex The list object with a "pattern" and admin code "name" entry.
+#' @param ... The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.
+#' @seealso \code{\link{agrep}}, \code{\link{countrify}}, \code{\link{geonamify}}
+#' @return The list of extracted admin code names or \code{NULL} for each name not found.
 #' @export
-process_regx <- function(val, regx, ...)
+adminify_regex <- function(query, regex, ...)
 {
-  result <- list(cc2 = NA, ac1 = NA, ac2 = NA)
-  tokens <- stats::setNames(utils::tail(str_match(val, regx$pattern)[1,], -1), regx$name)
-
+  result <- lapply(ccode, function(ele) NULL)
+  tokens <- stringr::str_match(query, regex$pattern)
+  tokens <- as.list(stats::setNames(tokens[2:length(tokens)], regex$name))
+  # process admin code hierarchy
   if (!any(is.na(tokens)))
-  {
-    # process admin code hierarchy
-    for (name in names(sort(code[regx$name])))
-    {
-      if (name == "cc2")
-      {
-        result[[name]] <- countrify(tokens[[name]], ...)
-      }
-      else if (name == "ac1")
-      {
-        result[[name]] <- codify.1(tokens[[name]], cc2 = result$cc2, ...)
-      }
-      else if (name == "ac2")
-      {
-        result[[name]] <- codify.2(tokens[[name]], cc2 = result$cc2, ac1 = result$ac1, ...)
-      }
-    }
-  }
+    for (name in sort(names(tokens)))
+      result[[name]] <- (
+        if (name == "ac0")
+          countrify(tokens[[name]], ...)$iso
+        else
+          geonamify(
+            tokens[[name]],
+            c(feature_code = rcode[[name]], Filter(length, stats::setNames(result, ccode))),
+            ...
+          )[[ccode[name]]]
+      )
 
-  result
+  replace(result, sapply(result, identical, character(0)), list(NULL))
 }
 
 #' Calculate administrative division codes using a list of named regular expression lists.
 #'
-#' This function essentially runs \code{process_regx} with each regular expression on the value.
-#' This function also nullifies results with incorrectly inferred hierarchy.
+#' This function essentially runs \code{adminify_regex} with each regular expression on the value.
 #'
-#' @param val The query value.
-#' @param regx_list The list of named regular expression list objects.
-#' @param ... The arguments passed to \code{\link{countrify}}, \code{\link{codify.1}}, and \code{\link{codify.2}}.
-#' @seealso \code{\link{process_regx}}
+#' @param query The query.
+#' @param regexes The list of named regular expression list objects.
+#' @param ... The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.
+#' @seealso \code{\link{adminify_regex}}
 #' @return The list of extracted admin code names or \code{NA} for each name not found.
 #' @export
-process_regx_list <- function(val, regx_list, ...)
+adminify_regexes <- function(query, regexes, ...)
 {
-  result <- coalesce(!!!lapply(regx_list, process_regx, val = val, ... = ...))
-  if (!is.prefix(result$ac1, result$cc2)) result$ac1 <- NA
-  if (!is.prefix(result$ac2, result$ac1)) result$ac2 <- NA
-  result
-}
-
-#' Calculate administrative division codes by splitting on a delimiter pattern.
-#'
-#' This function infers an admin code for each token.
-#' This function also nullifies results with incorrectly inferred hierarchy.
-#'
-#' @param val The query value.
-#' @param pat The delimiter pattern.
-#' @param ... The arguments passed to \code{\link{countrify}}, \code{\link{codify.1}}, and \code{\link{codify.2}}.
-#' @seealso \code{\link{process_regx}}
-#' @return The list of extracted admin code names or \code{NA} for each name not found.
-#' @export
-process_delim <- function(val, pattern, ...)
-{
-  tokens <- str_trim(str_split(val, pattern, simplify = T))
-  for (token in tokens) if (!is.na(cc2 <- countrify(token, ... = ...))) break
-  for (token in tokens) if (!is.na(ac1 <- codify.1(token, cc2 = cc2, ... = ...))) break
-  for (token in tokens) if (!is.na(ac2 <- codify.2(token, cc2 = cc2, ac1 = ac1, ... = ...))) break
-  if (!is.prefix(ac1, cc2)) ac1 <- NA
-  if (!is.prefix(ac2, ac1)) ac2 <- NA
-  list(cc2 = cc2, ac1 = ac1, ac2 = ac2)
+  lapply(regexes, adminify_regex, query = query, ...)
 }
