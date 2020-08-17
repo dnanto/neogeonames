@@ -3,7 +3,7 @@
 \docType{data}
 \name{geoname}
 \alias{geoname}
-\title{The geoname data set.}
+\title{geoname}
 \format{
 A data frame with 445722 rows and 19 columns
 \describe{
@@ -13,8 +13,8 @@ A data frame with 445722 rows and 19 columns
  \item{alternatenames}{alternatenames, comma separated, ascii names automatically transliterated, convenience attribute from alternatename table, varchar(10000)}
  \item{latitude}{latitude in decimal degrees (wgs84)}
  \item{longitude}{longitude in decimal degrees (wgs84)}
- \item{feature_class}{see <http://www.geonames.org/export/codes.html>, char(1)}
- \item{feature_code}{see <http://www.geonames.org/export/codes.html>, varchar(10)}
+ \item{feature_class}{see \url{http://www.geonames.org/export/codes.html}, char(1)}
+ \item{feature_code}{see \url{http://www.geonames.org/export/codes.html}, varchar(10)}
  \item{country_code}{ISO-3166 2-letter country code, 2 characters}
  \item{cc2}{alternate country codes, comma separated, ISO-3166 2-letter country code, 200 characters}
  \item{admin1_code}{fipscode (subject to change to iso code), see exceptions below, see file admin1Codes.txt for display names of this code; varchar(20)}
@@ -24,7 +24,7 @@ A data frame with 445722 rows and 19 columns
  \item{population}{bigint (8 byte int) }
  \item{elevation}{in meters, integer}
  \item{dem}{digital elevation model, srtm3 or gtopo30, average elevation of 3''x3'' (ca 90mx90m) or 30''x30'' (ca 900mx900m) area in meters, integer. srtm processed by cgiar/ciat.}
- \item{timezone}{the iana timezone id (see file <http://download.geonames.org/export/dump/timeZones.txt>) varchar(40)}
+ \item{timezone}{the iana timezone id (see file \url{http://download.geonames.org/export/dump/timeZones.txt}) varchar(40)}
  \item{modification_date}{date of last modification in yyyy-MM-dd format}
   ...
 }
@@ -36,33 +36,37 @@ A data frame with 445722 rows and 19 columns
 geoname
 }
 \description{
-|feature_code|definition|
-|-|-|
-|A|country, state, region,...|
-|P|city, village,...|
+This is a data frame consisting of a subset of the GeoNames Gazetteer all country data.
 }
 \details{
-|feature_code|feature_code|definition|note|
-|-|-|-|-|
-|A|ADM1|first-order administrative division|a primary administrative division of a country, such as a state in the United States|
-|A|ADM1H|historical first-order administrative division|a former first-order administrative division|
-|A|ADM2|second-order administrative division|a subdivision of a first-order administrative division|
-|A|ADM2H|historical second-order administrative division|a former second-order administrative division|
-|A|ADM3|third-order administrative division|a subdivision of a second-order administrative division|
-|A|ADM3H|historical third-order administrative division|a former third-order administrative division|
-|A|ADM4|fourth-order administrative division|a subdivision of a third-order administrative division|
-|A|ADM4H|historical fourth-order administrative division|a former fourth-order administrative division|
-|A|PCL|political entity||
-|A|PCLD|dependent political entity||
-|A|PCLF|freely associated state||
-|A|PCLH|historical political entity|a former political entity|
-|A|PCLI|independent political entity||
-|A|PCLS|semi-independent political entity||
-|A|TERR|territory||
-|P|PPLA|seat of a first-order administrative division|seat of a first-order administrative division (PPLC takes precedence over PPLA)|
-|P|PPLA2|seat of a second-order administrative division||
-|P|PPLA3|seat of a third-order administrative division||
-|P|PPLA4|seat of a fourth-order administrative division||
-|P|PPLC|capital of a political entity||
+\tabular{ll}{
+  feature_code \tab definition \cr
+  A \tab country, state, region,... \cr
+  P \tab city, village,... \cr
+ }
+
+\tabular{llll}{
+  feature_code \tab feature_code \tab definition \tab note \cr
+  A \tab ADM1 \tab first-order administrative division \tab a primary administrative division of a country, such as a state in the United States \cr
+  A \tab ADM1H \tab historical first-order administrative division \tab a former first-order administrative division \cr
+  A \tab ADM2 \tab second-order administrative division \tab a subdivision of a first-order administrative division \cr
+  A \tab ADM2H \tab historical second-order administrative division \tab a former second-order administrative division \cr
+  A \tab ADM3 \tab third-order administrative division \tab a subdivision of a second-order administrative division \cr
+  A \tab ADM3H \tab historical third-order administrative division \tab a former third-order administrative division \cr
+  A \tab ADM4 \tab fourth-order administrative division \tab a subdivision of a third-order administrative division \cr
+  A \tab ADM4H \tab historical fourth-order administrative division \tab a former fourth-order administrative division \cr
+  A \tab PCL \tab political entity \tab  \cr
+  A \tab PCLD \tab dependent political entity \tab  \cr
+  A \tab PCLF \tab freely associated state \tab  \cr
+  A \tab PCLH \tab historical political entity \tab a former political entity \cr
+  A \tab PCLI \tab independent political entity \tab  \cr
+  A \tab PCLS \tab semi-independent political entity \tab  \cr
+  A \tab TERR \tab territory \tab  \cr
+  P \tab PPLA \tab seat of a first-order administrative division \tab seat of a first-order administrative division (PPLC takes precedence over PPLA) \cr
+  P \tab PPLA2 \tab seat of a second-order administrative division \tab  \cr
+  P \tab PPLA3 \tab seat of a third-order administrative division \tab  \cr
+  P \tab PPLA4 \tab seat of a fourth-order administrative division \tab  \cr
+  P \tab PPLC \tab capital of a political entity \tab  \cr
+}
 }
 \keyword{datasets}

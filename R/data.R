@@ -1,16 +1,22 @@
-#' The country data...
+#' @title
+#' country
 #'
+#' @description
+#' This is a data frame of the GeoNames Gazetteer country info data.
+#'
+#' @details
 #' CountryCodes:
+#'
 #' ============
 #'
 #' The official ISO country code for the United Kingdom is 'GB'. The code 'UK' is reserved.
 #'
 #' A list of dependent countries is available here:
-#' <https://spreadsheets.google.com/ccc?key=pJpyPy-J5JSNhe7F_KxwiCA&hl=en>
+#' \url{https://spreadsheets.google.com/ccc?key=pJpyPy-J5JSNhe7F_KxwiCA&hl=en}
 #'
 #'
 #' The countrycode XK temporarily stands for Kosvo:
-#' <http://geonames.wordpress.com/2010/03/08/xk-country-code-for-kosovo/>
+#' \url{http://geonames.wordpress.com/2010/03/08/xk-country-code-for-kosovo/}
 #'
 #'
 #' CS (Serbia and Montenegro) with geonameId = 8505033 no longer exists.
@@ -18,27 +24,31 @@
 #'
 #'
 #' Currencies :
+#'
 #' ============
 #'
 #' A number of territories are not included in ISO 4217, because their currencies are not per se an independent currency,
 #' but a variant of another currency. These currencies are:
 #'
-#' 1. FO : Faroese krona (1:1 pegged to the Danish krone)
-#' 2. GG : Guernsey pound (1:1 pegged to the pound sterling)
-#' 3. JE : Jersey pound (1:1 pegged to the pound sterling)
-#' 4. IM : Isle of Man pound (1:1 pegged to the pound sterling)
-#' 5. TV : Tuvaluan dollar (1:1 pegged to the Australian dollar).
-#' 6. CK : Cook Islands dollar (1:1 pegged to the New Zealand dollar).
+#' \enumerate{
+#'   \item FO : Faroese krona (1:1 pegged to the Danish krone)
+#'   \item GG : Guernsey pound (1:1 pegged to the pound sterling)
+#'   \item JE : Jersey pound (1:1 pegged to the pound sterling)
+#'   \item IM : Isle of Man pound (1:1 pegged to the pound sterling)
+#'   \item TV : Tuvaluan dollar (1:1 pegged to the Australian dollar).
+#'   \item CK : Cook Islands dollar (1:1 pegged to the New Zealand dollar).
+#' }
 #'
 #' The following non-ISO codes are, however, sometimes used: GGP for the Guernsey pound,
-#' JEP for the Jersey pound and IMP for the Isle of Man pound (<http://en.wikipedia.org/wiki/ISO_4217>)
+#' JEP for the Jersey pound and IMP for the Isle of Man pound (\url{http://en.wikipedia.org/wiki/ISO_4217})
 #'
 #'
-#' A list of currency symbols is available here : <http://forum.geonames.org/gforum/posts/list/437.page>
-#' another list with fractional units is here: <http://forum.geonames.org/gforum/posts/list/1961.page>
+#' A list of currency symbols is available here : \url{http://forum.geonames.org/gforum/posts/list/437.page}
+#' another list with fractional units is here: \url{http://forum.geonames.org/gforum/posts/list/1961.page}
 #'
 #'
 #' Languages :
+#'
 #' ===========
 #'
 #' The column 'languages' lists the languages spoken in a country ordered by the number of speakers. The language code is a 'locale'
@@ -72,35 +82,47 @@
 #' @source \url{http://download.geonames.org/export/dump/countryInfo.txt}
 "country"
 
-#' The geoname data set.
+#' @title
+#' geoname
 #'
-#' |feature_code|definition|
-#' |-|-|
-#' |A|country, state, region,...|
-#' |P|city, village,...|
+#' @description
+#' This is a data frame consisting of a subset of the GeoNames Gazetteer all country data.
 #'
-#' |feature_code|feature_code|definition|note|
-#' |-|-|-|-|
-#' |A|ADM1|first-order administrative division|a primary administrative division of a country, such as a state in the United States|
-#' |A|ADM1H|historical first-order administrative division|a former first-order administrative division|
-#' |A|ADM2|second-order administrative division|a subdivision of a first-order administrative division|
-#' |A|ADM2H|historical second-order administrative division|a former second-order administrative division|
-#' |A|ADM3|third-order administrative division|a subdivision of a second-order administrative division|
-#' |A|ADM3H|historical third-order administrative division|a former third-order administrative division|
-#' |A|ADM4|fourth-order administrative division|a subdivision of a third-order administrative division|
-#' |A|ADM4H|historical fourth-order administrative division|a former fourth-order administrative division|
-#' |A|PCL|political entity||
-#' |A|PCLD|dependent political entity||
-#' |A|PCLF|freely associated state||
-#' |A|PCLH|historical political entity|a former political entity|
-#' |A|PCLI|independent political entity||
-#' |A|PCLS|semi-independent political entity||
-#' |A|TERR|territory||
-#' |P|PPLA|seat of a first-order administrative division|seat of a first-order administrative division (PPLC takes precedence over PPLA)|
-#' |P|PPLA2|seat of a second-order administrative division||
-#' |P|PPLA3|seat of a third-order administrative division||
-#' |P|PPLA4|seat of a fourth-order administrative division||
-#' |P|PPLC|capital of a political entity||
+#'
+#' Feature class:
+#'
+#' @details
+#' \tabular{ll}{
+#'   feature_class \tab definition \cr
+#'   A \tab country, state, region,... \cr
+#'   P \tab city, village,... \cr
+#'  }
+#'
+#' Feature code:
+#'
+#' \tabular{llll}{
+#'   feature_class \tab feature_code \tab definition \tab note \cr
+#'   A \tab ADM1 \tab first-order administrative division \tab a primary administrative division of a country, such as a state in the United States \cr
+#'   A \tab ADM1H \tab historical first-order administrative division \tab a former first-order administrative division \cr
+#'   A \tab ADM2 \tab second-order administrative division \tab a subdivision of a first-order administrative division \cr
+#'   A \tab ADM2H \tab historical second-order administrative division \tab a former second-order administrative division \cr
+#'   A \tab ADM3 \tab third-order administrative division \tab a subdivision of a second-order administrative division \cr
+#'   A \tab ADM3H \tab historical third-order administrative division \tab a former third-order administrative division \cr
+#'   A \tab ADM4 \tab fourth-order administrative division \tab a subdivision of a third-order administrative division \cr
+#'   A \tab ADM4H \tab historical fourth-order administrative division \tab a former fourth-order administrative division \cr
+#'   A \tab PCL \tab political entity \tab  \cr
+#'   A \tab PCLD \tab dependent political entity \tab  \cr
+#'   A \tab PCLF \tab freely associated state \tab  \cr
+#'   A \tab PCLH \tab historical political entity \tab a former political entity \cr
+#'   A \tab PCLI \tab independent political entity \tab  \cr
+#'   A \tab PCLS \tab semi-independent political entity \tab  \cr
+#'   A \tab TERR \tab territory \tab  \cr
+#'   P \tab PPLA \tab seat of a first-order administrative division \tab seat of a first-order administrative division (PPLC takes precedence over PPLA) \cr
+#'   P \tab PPLA2 \tab seat of a second-order administrative division \tab  \cr
+#'   P \tab PPLA3 \tab seat of a third-order administrative division \tab  \cr
+#'   P \tab PPLA4 \tab seat of a fourth-order administrative division \tab  \cr
+#'   P \tab PPLC \tab capital of a political entity \tab  \cr
+#' }
 #'
 #' @format A data frame with 445722 rows and 19 columns
 #' \describe{
@@ -110,8 +132,8 @@
 #'	 \item{alternatenames}{alternatenames, comma separated, ascii names automatically transliterated, convenience attribute from alternatename table, varchar(10000)}
 #'	 \item{latitude}{latitude in decimal degrees (wgs84)}
 #'	 \item{longitude}{longitude in decimal degrees (wgs84)}
-#'	 \item{feature_class}{see <http://www.geonames.org/export/codes.html>, char(1)}
-#'	 \item{feature_code}{see <http://www.geonames.org/export/codes.html>, varchar(10)}
+#'	 \item{feature_class}{see \url{http://www.geonames.org/export/codes.html}, char(1)}
+#'	 \item{feature_code}{see \url{http://www.geonames.org/export/codes.html}, varchar(10)}
 #'	 \item{country_code}{ISO-3166 2-letter country code, 2 characters}
 #'	 \item{cc2}{alternate country codes, comma separated, ISO-3166 2-letter country code, 200 characters}
 #'	 \item{admin1_code}{fipscode (subject to change to iso code), see exceptions below, see file admin1Codes.txt for display names of this code; varchar(20)}
@@ -121,7 +143,7 @@
 #'	 \item{population}{bigint (8 byte int) }
 #'	 \item{elevation}{in meters, integer}
 #'	 \item{dem}{digital elevation model, srtm3 or gtopo30, average elevation of 3''x3'' (ca 90mx90m) or 30''x30'' (ca 900mx900m) area in meters, integer. srtm processed by cgiar/ciat.}
-#'	 \item{timezone}{the iana timezone id (see file <http://download.geonames.org/export/dump/timeZones.txt>) varchar(40)}
+#'	 \item{timezone}{the iana timezone id (see file \url{http://download.geonames.org/export/dump/timeZones.txt}) varchar(40)}
 #'	 \item{modification_date}{date of last modification in yyyy-MM-dd format}
 #'   ...
 #' }
