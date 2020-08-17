@@ -3,14 +3,14 @@
 \docType{data}
 \name{rcode}
 \alias{rcode}
-\title{Named regex code to feature admin code.}
+\title{Map admin key to feature codes...}
 \format{
-An object of class \code{character} of length 4.
+An object of class \code{list} of length 4.
 }
 \usage{
 rcode
 }
 \description{
-Named regex code to feature admin code.
+Map admin key to feature codes...
 }
 \keyword{datasets}

@@ -9,7 +9,8 @@ countrify(query, n = 1, ...)
 \arguments{
 \item{query}{The country name query.}
 
-\item{n}{The number of allowable fuzzy search results before returning the top result, otherwise nothing.}
+\item{n}{The number of allowable fuzzy search results before returning the top result,
+otherwise nothing.}
 
 \item{...}{The parameters for \code{\link{agrep}}.}
 }

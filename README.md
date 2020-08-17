@@ -1,6 +1,8 @@
 # lubricity
 normalize/sniff place names
 
+note: need to test efficiency of the functions...
+
 note: experimental, in-progress, check-out the vignette...
 
 install: `devtools::install_github("dnanto/lubricity")`

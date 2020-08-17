@@ -11,7 +11,8 @@ geonamify(query, where = NULL, n = 1, ...)
 
 \item{where}{The named vector of values analogous to the SQL "WHERE" clause.}
 
-\item{n}{The number of allowable fuzzy search results before returning the top result, otherwise return nothing if exceeded.}
+\item{n}{The number of allowable fuzzy search results before returning the top result,
+otherwise return nothing if exceeded.}
 
 \item{...}{The parameters for \code{\link{agrep}}.}
 }

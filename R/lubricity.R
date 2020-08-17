@@ -7,25 +7,15 @@
 #' @name lubricity
 "_PACKAGE"
 
-#' Feature codes.
-#' @export
-fcode <- c(
-  "ADM1", "ADM1H", "ADM2", "ADM2H", "ADM3", "ADM3H", "ADM4", "ADM4H",
-  "PCLD", "PCLF", "TERR",
-  "PPLA", "PPLA2", "PPLA3", "PPLA4", "PPLC", "PPLCH"
+#' Map admin key to feature codes...
+rcode <- list(
+  ac1 = c("PPLC", "PPLA", "ADM1H", "ADM1"),
+  ac2 = c("PPLA2", "ADM2H", "ADM2"),
+  ac3 = c("PPLA3", "ADM3H", "ADM3"),
+  ac4 = c("PPLA4", "ADM4H", "ADM4")
 )
 
-#' Named regex code to feature admin code.
-#' @export
-rcode <- c(
-  ac1 = "ADM1",
-  ac2 = "ADM2",
-  ac3 = "ADM3",
-  ac4 = "ADM4"
-)
-
-#' Named regex code to admin column code.
-#' @export
+#' Map admin key to admin column...
 ccode <- c(
   ac0 = "country_code",
   ac1 = "admin1_code",
@@ -40,7 +30,8 @@ ccode <- c(
 #' It also performs a fuzzy search using \code{\link{agrep}} as a fall back.
 #'
 #' @param query The country name query.
-#' @param n The number of allowable fuzzy search results before returning the top result, otherwise nothing.
+#' @param n The number of allowable fuzzy search results before returning the top result,
+#'          otherwise nothing.
 #' @param ... The parameters for \code{\link{agrep}}.
 #' @seealso \code{\link{agrep}}
 #' @return The rows or \code{data.frame} with 0 rows.
@@ -75,7 +66,8 @@ countrify <- function(query, n = 1, ...)
 #'
 #' @param query The query.
 #' @param where The named vector of values analogous to the SQL "WHERE" clause.
-#' @param n The number of allowable fuzzy search results before returning the top result, otherwise return nothing if exceeded.
+#' @param n The number of allowable fuzzy search results before returning the top result,
+#'          otherwise return nothing if exceeded.
 #' @param ... The parameters for \code{\link{agrep}}.
 #' @seealso \code{\link{agrep}}
 #' @return The rows or \code{data.frame} with 0 rows.
@@ -87,24 +79,39 @@ geonamify <- function(query, where = NULL, n = 1, ...)
   # select table
   df <- lubricity::geoname
 
-  # where ...
-  if (!is.null(where))
-    for (key in names(where))
-      if (nrow(df) > 0)
-        df <- df[which(df[key] == where[key]), ]
-
   # where asciiname
-  df.x <- df[toupper(df$asciiname) == query, ]
+  df <- df[toupper(df$asciiname) == query, ]
 
-  # asciiname like ...
-  if (nrow(df.x) == 0)
+  # like asciiname
+  if (nrow(df) == 0 && n > 0)
   {
     idx <- agrep(query, df$asciiname, ignore.case = T, ...)
     if (!identical(idx, integer(0)) & length(idx) <= n)
-      df.x <- df[idx[[1]], ]
+      df <- df[idx[[1]], ]
   }
 
-  df.x
+  # where
+  if (!is.null(where))
+  {
+    for (key in names(where))
+    {
+      if (nrow(df) > 0)
+      {
+        # in
+        df <- df[df[[key]] %in% where[[key]], ]
+        # order by
+        df <- df[match(where[[key]], df[[key]]), ]
+        # remove non-match
+        df <- df[!is.na(df$geonameid), ]
+      }
+      else
+      {
+        break
+      }
+    }
+  }
+
+  df
 }
 
 #' Calculate administrative division codes by splitting on a delimiter pattern.
@@ -125,18 +132,25 @@ adminify_delim <- function(query, delim, ...)
   tokens <- tokens[!is.na(tokens)]
 
   # countrify
-  idx <- 0
   for (idx in seq_along(tokens))
-  {
-    if (!identical(ele <- countrify(tokens[idx], ...)$iso, character(0)))
-    {
-      result[["ac0"]] <- ele
+    if (!is.na(result[["ac0"]] <- countrify(tokens[idx], ...)$iso[1]))
       break
+
+  # countrify via geonamify
+  if (is.na(result[["ac0"]]))
+    for (idx in seq_along(tokens))
+    {
+      feature_code <- c("TERR", "PCL", "PCLF", "PCLD", "PCLS", "PCLH", "PCLI")
+      ele <- geonamify(tokens[idx], where = list(feature_code = feature_code))$country_code[1]
+      if (!is.na(ele))
+      {
+        result[["ac0"]] <- ele
+        break
+      }
     }
-  }
 
   # remove identified token
-  if (!is.null(idx) && idx > 0)
+  if (!is.na(result[["ac0"]]))
     tokens <- tokens[-idx]
 
   # geonamify
@@ -144,70 +158,20 @@ adminify_delim <- function(query, delim, ...)
   {
     if (is.na(result[[key]]))
     {
-      idx <- 0
       for (idx in seq_along(tokens))
       {
-        params <- c(feature_code = rcode[[key]], Filter(length, stats::setNames(result, ccode)))
-        params <- Filter(Negate(is.na), params)
-        ele <- geonamify(tokens[idx], params, ...)[[ccode[key]]]
-        if (!identical(ele, character(0)))
+        params <- as.list(Filter(Negate(is.na), stats::setNames(result, ccode)))
+        params$feature_code <- rcode[[key]]
+        ele <- geonamify(tokens[idx], params, ...)[[ccode[key]]][1]
+        if (!is.na(ele))
           result[[key]] <- ele
       }
       # remove identified token
-      if (!is.null(idx) && idx > 0)
+      if (!is.na(result[[key]]))
         tokens <- tokens[-idx]
     }
   }
 
+
   result
-}
-
-#' Calculate administrative division codes using a named regular expression.
-#'
-#' The regular expression names each group by the administrative division code.
-#' The function processes each group according to the division hierarchy, starting at the top.
-#' The function uses matches to higher levels as limiters if lower admin code groups are present in the regular expression.
-#' The admin code names include "cc2", "ac2", and "ac2" corresponding to "country name", "admin code 1", and "admin code 2".
-#'
-#' @param query The query.
-#' @param regex The list object with a "pattern" and admin code "name" entry.
-#' @param ... The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.
-#' @seealso \code{\link{agrep}}, \code{\link{countrify}}, \code{\link{geonamify}}
-#' @return The list of extracted admin code names or \code{NULL} for each name not found.
-#' @export
-adminify_regex <- function(query, regex, ...)
-{
-  result <- lapply(ccode, function(ele) NULL)
-  tokens <- stringr::str_match(query, regex$pattern)
-  tokens <- as.list(stats::setNames(tokens[2:length(tokens)], regex$name))
-  # process admin code hierarchy
-  if (!any(is.na(tokens)))
-    for (name in sort(names(tokens)))
-      result[[name]] <- (
-        if (name == "ac0")
-          countrify(tokens[[name]], ...)$iso
-        else
-          geonamify(
-            tokens[[name]],
-            c(feature_code = rcode[[name]], Filter(length, stats::setNames(result, ccode))),
-            ...
-          )[[ccode[name]]]
-      )
-
-  replace(result, sapply(result, identical, character(0)), list(NULL))
-}
-
-#' Calculate administrative division codes using a list of named regular expression lists.
-#'
-#' This function essentially runs \code{adminify_regex} with each regular expression on the value.
-#'
-#' @param query The query.
-#' @param regexes The list of named regular expression list objects.
-#' @param ... The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.
-#' @seealso \code{\link{adminify_regex}}
-#' @return The list of extracted admin code names or \code{NA} for each name not found.
-#' @export
-adminify_regexes <- function(query, regexes, ...)
-{
-  lapply(regexes, adminify_regex, query = query, ...)
 }

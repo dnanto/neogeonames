@@ -3,7 +3,7 @@
 \docType{data}
 \name{ccode}
 \alias{ccode}
-\title{Named regex code to admin column code.}
+\title{Map admin key to admin column...}
 \format{
 An object of class \code{character} of length 5.
 }
@@ -11,6 +11,6 @@ An object of class \code{character} of length 5.
 ccode
 }
 \description{
-Named regex code to admin column code.
+Map admin key to admin column...
 }
 \keyword{datasets}
