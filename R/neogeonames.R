@@ -1,5 +1,5 @@
 #' @description
-#' neogeonames: Sniff and Normalize Place Names in R
+#' neogeonames: Parse, Sniff, and Normalize Place Names in R
 #'
 #' This package provides a subset of GeoNames Gazetteer data and normalization functions.
 #'
