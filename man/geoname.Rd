@@ -37,16 +37,21 @@ geoname
 }
 \description{
 This is a data frame consisting of a subset of the GeoNames Gazetteer all country data.
+
+
+Feature class:
 }
 \details{
 \tabular{ll}{
-  feature_code \tab definition \cr
+  feature_class \tab definition \cr
   A \tab country, state, region,... \cr
   P \tab city, village,... \cr
  }
 
+Feature code:
+
 \tabular{llll}{
-  feature_code \tab feature_code \tab definition \tab note \cr
+  feature_class \tab feature_code \tab definition \tab note \cr
   A \tab ADM1 \tab first-order administrative division \tab a primary administrative division of a country, such as a state in the United States \cr
   A \tab ADM1H \tab historical first-order administrative division \tab a former first-order administrative division \cr
   A \tab ADM2 \tab second-order administrative division \tab a subdivision of a first-order administrative division \cr
