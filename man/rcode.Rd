@@ -5,7 +5,7 @@
 \alias{rcode}
 \title{Map admin key to feature codes...}
 \format{
-An object of class \code{list} of length 4.
+An object of class \code{list} of length 5.
 }
 \usage{
 rcode

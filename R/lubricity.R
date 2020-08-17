@@ -9,6 +9,7 @@
 
 #' Map admin key to feature codes...
 rcode <- list(
+  ac0 = c("TERR", "PCL", "PCLF", "PCLD", "PCLS", "PCLH", "PCLI"),
   ac1 = c("PPLC", "PPLA", "ADM1H", "ADM1"),
   ac2 = c("PPLA2", "ADM2H", "ADM2"),
   ac3 = c("PPLA3", "ADM3H", "ADM3"),
@@ -65,6 +66,7 @@ countrify <- function(query, n = 1, ...)
 #' Calculate the corresponding \code{\link{geoname}} rows for the asciiname query.
 #'
 #' @param query The query.
+#' @param df The data frame of \code{\link{geoname}} data.
 #' @param where The named vector of values analogous to the SQL "WHERE" clause.
 #' @param n The number of allowable fuzzy search results before returning the top result,
 #'          otherwise return nothing if exceeded.
@@ -72,15 +74,10 @@ countrify <- function(query, n = 1, ...)
 #' @seealso \code{\link{agrep}}
 #' @return The rows or \code{data.frame} with 0 rows.
 #' @export
-geonamify <- function(query, where = NULL, n = 1, ...)
+geonamify <- function(query, df = lubricity::geoname, where = NULL, n = 1, ...)
 {
-  query <- toupper(query)
-
-  # select table
-  df <- lubricity::geoname
-
   # where asciiname
-  df <- df[toupper(df$asciiname) == query, ]
+  df <- df[toupper(df$asciiname) == toupper(query), ]
 
   # like asciiname
   if (nrow(df) == 0 && n > 0)
@@ -124,7 +121,7 @@ geonamify <- function(query, where = NULL, n = 1, ...)
 #' @seealso \code{\link{geonamify}}
 #' @return The list of extracted admin code names or \code{NA} for each name not found.
 #' @export
-adminify_delim <- function(query, delim, ...)
+geonamify_delim <- function(query, delim, ...)
 {
   result <- sapply(ccode, function(ele) NA)
   tokens <- stringr::str_trim(stringr::str_split(query, delim, simplify = T))
@@ -136,42 +133,25 @@ adminify_delim <- function(query, delim, ...)
     if (!is.na(result[["ac0"]] <- countrify(tokens[idx], ...)$iso[1]))
       break
 
-  # countrify via geonamify
-  if (is.na(result[["ac0"]]))
+  # select table
+  df <- lubricity::geoname
+  if (!is.na(result[["ac0"]])) df <- df[which(df$country_code == result[["ac0"]]), ]
+
+  for (key in names(Filter(is.na, result)))
+  {
+    params <- list(feature_code = rcode[[key]])
     for (idx in seq_along(tokens))
     {
-      feature_code <- c("TERR", "PCL", "PCLF", "PCLD", "PCLS", "PCLH", "PCLI")
-      ele <- geonamify(tokens[idx], where = list(feature_code = feature_code))$country_code[1]
-      if (!is.na(ele))
+      row <- geonamify(tokens[idx], df, params, ...)[[ccode[key]]][1]
+      if (!is.na(row))
       {
-        result[["ac0"]] <- ele
+        result[[key]] <- row
+        df <- df[which(df[[ccode[key]]] == row), ]
+        tokens <- tokens[-idx]
         break
       }
     }
-
-  # remove identified token
-  if (!is.na(result[["ac0"]]))
-    tokens <- tokens[-idx]
-
-  # geonamify
-  for (key in names(rcode))
-  {
-    if (is.na(result[[key]]))
-    {
-      for (idx in seq_along(tokens))
-      {
-        params <- as.list(Filter(Negate(is.na), stats::setNames(result, ccode)))
-        params$feature_code <- rcode[[key]]
-        ele <- geonamify(tokens[idx], params, ...)[[ccode[key]]][1]
-        if (!is.na(ele))
-          result[[key]] <- ele
-      }
-      # remove identified token
-      if (!is.na(result[[key]]))
-        tokens <- tokens[-idx]
-    }
   }
-
 
   result
 }

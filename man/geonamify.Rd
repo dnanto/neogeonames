@@ -4,10 +4,12 @@
 \alias{geonamify}
 \title{Calculate the corresponding \code{\link{geoname}} rows for the asciiname query.}
 \usage{
-geonamify(query, where = NULL, n = 1, ...)
+geonamify(query, df = lubricity::geoname, where = NULL, n = 1, ...)
 }
 \arguments{
 \item{query}{The query.}
+
+\item{df}{The data frame of \code{\link{geoname}} data.}
 
 \item{where}{The named vector of values analogous to the SQL "WHERE" clause.}
 

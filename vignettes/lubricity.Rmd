@@ -7,14 +7,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=F}
-library(lubricity)
-```
-
 ```{r}
+library(lubricity)
 df <- read.delim(system.file("extdata", "feature.tsv", package = "lubricity"))
 countries <- unique(df$country)
-df.country <- lapply(countries, adminify_delim, delim = "[:,]")
+df.country <- lapply(countries, geonamify_delim, delim = "[:,]")
 df.country <- data.frame(country = countries, do.call(rbind, df.country))
 df.country[order(df.country$country), ]
 ```
