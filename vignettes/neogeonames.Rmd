@@ -1,5 +1,5 @@
 ---
-title: "Sniff and Normalize Place Names in R"
+title: "Parse, Sniff, and Normalize Place Names in R"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Normalize and Sniff Place Names in R}
@@ -8,8 +8,8 @@ vignette: >
 ---
 
 ```{r}
-library(lubricity)
-df <- read.delim(system.file("extdata", "feature.tsv", package = "lubricity"))
+library(neogeonames)
+df <- read.delim(system.file("extdata", "feature.tsv", package = "neogeonames"))
 countries <- unique(df$country)
 df.country <- lapply(countries, geonamify_delim, delim = "[:,]")
 df.country <- data.frame(country = countries, do.call(rbind, df.country))

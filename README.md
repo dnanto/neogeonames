@@ -1,11 +1,10 @@
-# lubricity
-normalize/sniff place names
+# neogeonames
 
-note: need to test efficiency of the functions...
+This package provides GeoNames Gazetteer data and functions to standardize place names.
 
 note: experimental, in-progress, check-out the vignette...
 
-install: `devtools::install_github("dnanto/lubricity")`
+install: `devtools::install_github("dnanto/neogeonames")`
 
 # data
 

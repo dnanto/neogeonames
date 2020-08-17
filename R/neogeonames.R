@@ -1,10 +1,10 @@
 #' @description
-#' lubricity: Sniff and Normalize Place Names in R
+#' neogeonames: Sniff and Normalize Place Names in R
 #'
 #' This package provides a subset of GeoNames Gazetteer data and normalization functions.
 #'
 #' @docType package
-#' @name lubricity
+#' @name neogeonames
 "_PACKAGE"
 
 #' Map admin key to feature codes...
@@ -44,23 +44,23 @@ countrify <- function(query, n = 1, ...)
   query <- toupper(query)
 
   # check ISO 3166-1 alpha-2 code
-  if (idx.m <- match(query, toupper(lubricity::country$iso), nomatch = F))
+  if (idx.m <- match(query, toupper(neogeonames::country$iso), nomatch = F))
     idx <- idx.m
   # check ISO 3166-1 alpha-3 code
-  else if (idx.m <- match(query, toupper(lubricity::country$iso3), nomatch = F))
+  else if (idx.m <- match(query, toupper(neogeonames::country$iso3), nomatch = F))
     idx <- idx.m
   # check country name
-  else if (idx.m <- match(query, toupper(lubricity::country$country), nomatch = F))
+  else if (idx.m <- match(query, toupper(neogeonames::country$country), nomatch = F))
     idx <- idx.m
   # fuzzy search
   else
   {
-    idx.m <- agrep(query, lubricity::country$country, ignore.case = T, ...)
+    idx.m <- agrep(query, neogeonames::country$country, ignore.case = T, ...)
     if (!identical(idx.m, integer(0)) & length(idx.m) <= n)
       idx <- idx.m[[1]]
   }
 
-  lubricity::country[idx, ]
+  neogeonames::country[idx, ]
 }
 
 #' Calculate the corresponding \code{\link{geoname}} rows for the asciiname query.
@@ -74,7 +74,7 @@ countrify <- function(query, n = 1, ...)
 #' @seealso \code{\link{agrep}}
 #' @return The rows or \code{data.frame} with 0 rows.
 #' @export
-geonamify <- function(query, df = lubricity::geoname, where = NULL, n = 1, ...)
+geonamify <- function(query, df = neogeonames::geoname, where = NULL, n = 1, ...)
 {
   # where asciiname
   df <- df[toupper(df$asciiname) == toupper(query), ]
@@ -134,7 +134,7 @@ geonamify_delim <- function(query, delim, ...)
       break
 
   # select table
-  df <- lubricity::geoname
+  df <- neogeonames::geoname
   if (!is.na(result[["ac0"]])) df <- df[which(df$country_code == result[["ac0"]]), ]
 
   for (key in names(Filter(is.na, result)))

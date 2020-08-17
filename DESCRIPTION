@@ -1,9 +1,9 @@
-Package: lubricity
-Title: Sniff and Normalize Place Names in R
+Package: neogeonames
+Title: Parse, Sniff, and Normalize Place Names in R
 Version: 0.0.0.9000
 Authors@R: person("Daniel", "Negrón", email = "dnegron2@gmu.edu", role = c("aut", "cre"))
 Maintainer: Daniel Negrón <dnegron2@gmu.edu>
-Description: This package provides functions to extract and normalize place names according to administrative division.
+Description: This package provides GeoNames Gazetteer data and functions to standardize place names.
 Depends: R (>= 3.5)
 License: MIT + file LICENSE
 Encoding: UTF-8
