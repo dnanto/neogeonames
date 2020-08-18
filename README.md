@@ -5,6 +5,7 @@ This package provides GeoNames Gazetteer data and functions to standardize place
 note: experimental, in-progress, check-out the vignette...
 
 install: `devtools::install_github("dnanto/neogeonames")`
+
 vignette: `browseVignettes("neogeonames")`
 
 # data
