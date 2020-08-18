@@ -7,7 +7,6 @@ vignette: >
   %\VignetteIndexEntry{New GeoNames Data Package and Functions in R}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteKeyword{HTML}
 ---
 
 Load the example data and normalize the "country" column into ISO3166 codes.
