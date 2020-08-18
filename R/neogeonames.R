@@ -118,8 +118,8 @@ geonamify <- function(query, df = neogeonames::geoname, where = NULL, n = 1, ...
 #' @param delim The delimiter pattern.
 #' @param ... The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.
 #' @seealso \code{\link{geonamify}}
-#' @return The list with an "id" and "ac" list consisting of the geonameid and administrative
-#'         division values or \code{NA} if missing.
+#' @return The list with "id" and "ac" atomic vectors consisting of the geonameid and
+#'         administrative class division values or \code{NA} if missing.
 #' @export
 geonamify_delim <- function(query, delim, ...)
 {

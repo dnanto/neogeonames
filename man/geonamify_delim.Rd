@@ -14,8 +14,8 @@ geonamify_delim(query, delim, ...)
 \item{...}{The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.}
 }
 \value{
-The list with an "id" and "ac" list consisting of the geonameid and administrative
-        division values or \code{NA} if missing.
+The list with "id" and "ac" atomic vectors consisting of the geonameid and
+        administrative class division values or \code{NA} if missing.
 }
 \description{
 This function infers an admin code for each token.
