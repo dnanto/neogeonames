@@ -8,6 +8,7 @@
 "_PACKAGE"
 
 #' Map admin key to feature codes...
+#' @export
 rcode <- list(
   ac0 = c("TERR", "PCL", "PCLF", "PCLD", "PCLS", "PCLH", "PCLI"),
   ac1 = c("PPLC", "PPLA", "ADM1H", "ADM1"),
@@ -17,6 +18,7 @@ rcode <- list(
 )
 
 #' Map admin key to admin column...
+#' @export
 ccode <- c(
   ac0 = "country_code",
   ac1 = "admin1_code",
@@ -53,7 +55,7 @@ countrify <- function(query, n = 1, ...)
   else if (idx.m <- match(query, toupper(neogeonames::country$country), nomatch = F))
     idx <- idx.m
   # fuzzy search
-  else
+  else if (n > 0)
   {
     idx.m <- agrep(query, neogeonames::country$country, ignore.case = T, ...)
     if (!identical(idx.m, integer(0)) & length(idx.m) <= n)
@@ -88,23 +90,20 @@ geonamify <- function(query, df = neogeonames::geoname, where = NULL, n = 1, ...
   }
 
   # where
-  if (!is.null(where))
+  for (key in names(where))
   {
-    for (key in names(where))
+    if (nrow(df) > 0)
     {
-      if (nrow(df) > 0)
-      {
-        # in
-        df <- df[df[[key]] %in% where[[key]], ]
-        # order by
-        df <- df[match(where[[key]], df[[key]]), ]
-        # remove non-match
-        df <- df[!is.na(df$geonameid), ]
-      }
-      else
-      {
-        break
-      }
+      # in
+      df <- df[df[[key]] %in% where[[key]], ]
+      # order by
+      df <- df[match(where[[key]], df[[key]]), ]
+      # remove non-match
+      df <- df[!is.na(df$geonameid), ]
+    }
+    else
+    {
+      break
     }
   }
 
@@ -119,39 +118,63 @@ geonamify <- function(query, df = neogeonames::geoname, where = NULL, n = 1, ...
 #' @param delim The delimiter pattern.
 #' @param ... The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.
 #' @seealso \code{\link{geonamify}}
-#' @return The list of extracted admin code names or \code{NA} for each name not found.
+#' @return The list with an "id" and "ac" list consisting of the geonameid and administrative
+#'         division values or \code{NA} if missing.
 #' @export
 geonamify_delim <- function(query, delim, ...)
 {
-  result <- sapply(ccode, function(ele) NA)
+  geo.ac <- sapply(ccode, function(ele) NA)
+  geo.id <- sapply(ccode, function(ele) NA)
   tokens <- stringr::str_trim(stringr::str_split(query, delim, simplify = T))
   tokens <- Filter(nchar, tokens)
   tokens <- tokens[!is.na(tokens)]
 
   # countrify
   for (idx in seq_along(tokens))
-    if (!is.na(result[["ac0"]] <- countrify(tokens[idx], ...)$iso[1]))
+  {
+    rows <- countrify(tokens[idx], ...)
+    if (!is.na(geo.ac[["ac0"]] <- rows$iso[1]))
+    {
+      geo.id[["ac0"]] <- rows$geonameid[1]
       break
+    }
+  }
 
   # select table
   df <- neogeonames::geoname
-  if (!is.na(result[["ac0"]])) df <- df[which(df$country_code == result[["ac0"]]), ]
+  # subset ac0
+  if (!is.na(geo.ac[["ac0"]])) df <- df[which(df$country_code == geo.ac[["ac0"]]), ]
 
-  for (key in names(Filter(is.na, result)))
+  keys <- geo.ac[(1 + !is.na(geo.ac[["ac0"]])):length(geo.ac)]
+
+  for (key in names(keys))
   {
+    # params to restrict feature code to admin level
     params <- list(feature_code = rcode[[key]])
     for (idx in seq_along(tokens))
     {
-      row <- geonamify(tokens[idx], df, params, ...)[[ccode[key]]][1]
-      if (!is.na(row))
+      # check if perfect match to admin column
+      rows <- df[which(df[ccode[[key]]] == toupper(tokens[idx])), ]
+      val <- rows[[ccode[key]]][1]
+      # otherwise geonamify using previous results
+      if (is.na(val))
       {
-        result[[key]] <- row
-        df <- df[which(df[[ccode[key]]] == row), ]
+        rows <- geonamify(tokens[idx], df, params, ...)
+        val <- rows[[ccode[key]]][1]
+      }
+      if (!is.na(val))
+      {
+        # save
+        geo.ac[[key]] <- val
+        geo.id[[key]] <- rows$geonameid[1]
+        # subset
+        df <- df[which(df[[ccode[key]]] == geo.ac[[key]]), ]
+        # remove token
         tokens <- tokens[-idx]
         break
       }
     }
   }
 
-  result
+  list(id = geo.id, ac = geo.ac)
 }

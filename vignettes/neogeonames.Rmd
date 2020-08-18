@@ -11,7 +11,15 @@ vignette: >
 library(neogeonames)
 df <- read.delim(system.file("extdata", "feature.tsv", package = "neogeonames"))
 countries <- unique(df$country)
-df.country <- lapply(countries, geonamify_delim, delim = "[:,]")
-df.country <- data.frame(country = countries, do.call(rbind, df.country))
-df.country[order(df.country$country), ]
+geo <- lapply(countries, geonamify_delim, delim = "[:,]")
+df.id <- as.data.frame(do.call(rbind, lapply(geo, `[[`, "id")))
+df.ac <- as.data.frame(do.call(rbind, lapply(geo, `[[`, "ac")))
+```
+
+```{r}
+df.id
+```
+
+```{r}
+df.ac
 ```
