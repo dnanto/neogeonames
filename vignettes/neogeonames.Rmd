@@ -1,11 +1,16 @@
 ---
-title: "Parse, Sniff, and Normalize Place Names in R"
+title: "New GeoNames Data Package and Functions in R"
+date: "`r Sys.Date()`"
+author: Daniel Antonio Negrón
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Normalize and Sniff Place Names in R}
+  %\VignetteIndexEntry{New GeoNames Data Package and Functions in R}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteKeyword{HTML}
 ---
+
+Load the example data and normalize the "country" column into ISO3166 codes.
 
 ```{r}
 library(neogeonames)
@@ -16,13 +21,19 @@ df.ac <- data.frame(id = 1:length(geo), country = country, do.call(rbind, lapply
 df.id <- data.frame(id = 1:length(geo), country = country, do.call(rbind, lapply(geo, `[[`, "id")))
 ```
 
-```{r}
-df.ac
-```
+View the admin codes.
 
 ```{r}
-df.id
+head(df.ac)
 ```
+
+View the "geonameid" associated with each admin code.
+
+```{r}
+head(df.id)
+```
+
+Merge coordinate data with the admin code results and back with the original data.
 
 ```{r}
 # remove rows with missing country_code
@@ -42,5 +53,6 @@ df.coor <- merge(
 
 # merge with admin codes and original data
 df.coor <- merge(df.ac, df.coor, by = "id", all.x = T)
-merge(df, df.coor[2:ncol(df.coor)], by = "country", all.x = T)
+df.geo <- merge(df, df.coor[2:ncol(df.coor)], by = "country", all.x = T)
+head(unique(df.geo[c("country", "ac0", "ac1", "ac2", "ac3", "ac4", "latitude", "longitude")]))
 ```

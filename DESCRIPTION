@@ -1,5 +1,5 @@
 Package: neogeonames
-Title: Parse, Sniff, and Normalize Place Names in R
+Title: New GeoNames Data Package and Functions in R
 Version: 0.0.0.9000
 Authors@R: person("Daniel", "Negrón", email = "dnegron2@gmu.edu", role = c("aut", "cre"))
 Maintainer: Daniel Negrón <dnegron2@gmu.edu>

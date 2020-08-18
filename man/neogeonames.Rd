@@ -4,9 +4,9 @@
 \name{neogeonames}
 \alias{neogeonames}
 \alias{neogeonames-package}
-\title{neogeonames: Parse, Sniff, and Normalize Place Names in R}
+\title{neogeonames: New GeoNames Data Package and Functions in R}
 \description{
-neogeonames: Parse, Sniff, and Normalize Place Names in R
+neogeonames: New GeoNames Data Package and Functions in R
 
 This package provides a subset of GeoNames Gazetteer data and normalization functions.
 }
