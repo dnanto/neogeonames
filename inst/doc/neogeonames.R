@@ -2,7 +2,7 @@
 library(neogeonames)
 df <- read.delim(system.file("extdata", "feature.tsv", package = "neogeonames"))
 country <- unique(df$country)
-geo <- lapply(country, geonamify_delim, delim = "[:,]")
+geo <- lapply(country, adminify, delim = "[:,]")
 df.ac <- data.frame(id = 1:length(geo), country = country, do.call(rbind, lapply(geo, `[[`, "ac")))
 df.id <- data.frame(id = 1:length(geo), country = country, do.call(rbind, lapply(geo, `[[`, "id")))
 

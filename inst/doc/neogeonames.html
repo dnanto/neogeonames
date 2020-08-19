@@ -12,7 +12,7 @@
 
 <meta name="author" content="Daniel Antonio Negrón" />
 
-<meta name="date" content="2020-08-18" />
+<meta name="date" content="2020-08-19" />
 
 <title>New GeoNames Data Package and Functions in R</title>
 
@@ -331,7 +331,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">New GeoNames Data Package and Functions in R</h1>
 <h4 class="author">Daniel Antonio Negrón</h4>
-<h4 class="date">2020-08-18</h4>
+<h4 class="date">2020-08-19</h4>
 
 
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(neogeonames)</span>
 <span id="cb1-2"><a href="#cb1-2"></a>df &lt;-<span class="st"> </span><span class="kw">read.delim</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;feature.tsv&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;neogeonames&quot;</span>))</span>
 <span id="cb1-3"><a href="#cb1-3"></a>country &lt;-<span class="st"> </span><span class="kw">unique</span>(df<span class="op">$</span>country)</span>
-<span id="cb1-4"><a href="#cb1-4"></a>geo &lt;-<span class="st"> </span><span class="kw">lapply</span>(country, geonamify_delim, <span class="dt">delim =</span> <span class="st">&quot;[:,]&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4"></a>geo &lt;-<span class="st"> </span><span class="kw">lapply</span>(country, adminify, <span class="dt">delim =</span> <span class="st">&quot;[:,]&quot;</span>)</span>
 <span id="cb1-5"><a href="#cb1-5"></a>df.ac &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">id =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(geo), <span class="dt">country =</span> country, <span class="kw">do.call</span>(rbind, <span class="kw">lapply</span>(geo, <span class="st">`</span><span class="dt">[[</span><span class="st">`</span>, <span class="st">&quot;ac&quot;</span>)))</span>
 <span id="cb1-6"><a href="#cb1-6"></a>df.id &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">id =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(geo), <span class="dt">country =</span> country, <span class="kw">do.call</span>(rbind, <span class="kw">lapply</span>(geo, <span class="st">`</span><span class="dt">[[</span><span class="st">`</span>, <span class="st">&quot;id&quot;</span>)))</span></code></pre></div>
 <p>View the admin codes.</p>

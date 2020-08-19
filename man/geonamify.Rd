@@ -2,14 +2,14 @@
 % Please edit documentation in R/neogeonames.R
 \name{geonamify}
 \alias{geonamify}
-\title{Calculate the corresponding \code{\link{geoname}} rows for the asciiname query.}
+\title{Calculate the \code{\link{geoname}} rows.}
 \usage{
-geonamify(query, df = neogeonames::geoname, where = NULL, n = 1, ...)
+geonamify(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, ...)
 }
 \arguments{
-\item{query}{The query.}
+\item{query}{The place name query.}
 
-\item{df}{The data frame of \code{\link{geoname}} data.}
+\item{dfgeo}{The data frame of \code{\link{geoname}} data.}
 
 \item{where}{The named vector of values analogous to the SQL "WHERE" clause.}
 
@@ -22,7 +22,7 @@ otherwise return nothing if exceeded.}
 The rows or \code{data.frame} with 0 rows.
 }
 \description{
-Calculate the corresponding \code{\link{geoname}} rows for the asciiname query.
+The function performs a case-insensitive search for matches to the asciiname column.
 }
 \seealso{
 \code{\link{agrep}}

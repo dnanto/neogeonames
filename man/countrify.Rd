@@ -2,12 +2,14 @@
 % Please edit documentation in R/neogeonames.R
 \name{countrify}
 \alias{countrify}
-\title{Calculate the corresponding row in the country table for the given query.}
+\title{Calculate the \code{\link{country}} row.}
 \usage{
-countrify(query, n = 1, ...)
+countrify(query, dfcou = neogeonames::country, n = 1, ...)
 }
 \arguments{
-\item{query}{The country name query.}
+\item{query}{The country query.}
+
+\item{dfcou}{The data frame of \code{\link{country}} data.}
 
 \item{n}{The number of allowable fuzzy search results before returning the top result,
 otherwise nothing.}

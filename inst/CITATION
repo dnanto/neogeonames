@@ -1,0 +1,11 @@
+citHeader("To cite neogeonames in publications, please use:")
+
+citEntry(
+  entry = "Unpublished",
+  author = "Daniel Negrón",
+  title = "neogeonames: New GeoNames Data Package and Functions in R",
+  year = "2020",
+  url = "https://github.com/dnanto/neogeonames",
+  textVersion = "D. Negrón. neogeonames: New GeoNames Data Package and Functions in R. 2020.",
+  note = "Part of an in-progress dissertation..."
+)

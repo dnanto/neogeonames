@@ -2,13 +2,11 @@
 #' No download occurs if the file already exists.
 #' @param burl The base url to download the "countryInfo.txt" and "allCountries.zip" files.
 #' @return The data frame.
-geonames_install <- function(burl = "http://download.geonames.org/export/dump")
-{
+geonames_install <- function(burl = "http://download.geonames.org/export/dump") {
   # download country
-  url <- paste(burl, "countryInfo.txt", sep="/")
+  url <- paste(burl, "countryInfo.txt", sep = "/")
   destfile <- file.path(getwd(), basename(url))
-  if (!file.exists(destfile))
-  {
+  if (!file.exists(destfile)) {
     cat("download:", url, "->", destfile, "\n")
     utils::download.file(url, destfile)
   }
@@ -36,10 +34,9 @@ geonames_install <- function(burl = "http://download.geonames.org/export/dump")
   )
 
   # download country
-  url <- paste(burl, "allCountries.zip", sep="/")
+  url <- paste(burl, "allCountries.zip", sep = "/")
   destfile <- file.path(getwd(), basename(url))
-  if (!file.exists(destfile))
-  {
+  if (!file.exists(destfile)) {
     cat("download:", url, "->", destfile, "\n")
     utils::download.file(url, destfile)
   }

@@ -10,6 +10,14 @@ neogeonames: New GeoNames Data Package and Functions in R
 
 This package provides a subset of GeoNames Gazetteer data and normalization functions.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/dnanto/neogeonames}
+  \item Report bugs at \url{https://github.com/dnanto/neogeonames/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Daniel Negrón \email{dnegron2@gmu.edu}
 
