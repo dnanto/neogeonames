@@ -8,16 +8,15 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
+  fig.path = "man/figures",
   out.width = "100%"
 )
 ```
 
-# neogeonames
+# neogeonames <img src="man/figures/logo.png" align="right" width="120" />
 
 <!-- badges: start -->
 <!-- badges: end -->
-
-![neogeonames](neogeonames.png)
 
 The goal of neogeonames is to provide a useful subset of the 
 [GeoNames Gazetteer Data](http://download.geonames.org/export/dump/) with functions to infer 
