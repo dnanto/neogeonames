@@ -7,6 +7,8 @@
 
 <!-- badges: end -->
 
+![neogeonames](neogeonames.png)
+
 The goal of neogeonames is to provide a useful subset of the [GeoNames
 Gazetteer Data](http://download.geonames.org/export/dump/) with
 functions to infer <https://en.wikipedia.org/wiki/ISO_3166> codes for
