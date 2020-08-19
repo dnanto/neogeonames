@@ -40,7 +40,7 @@ a set of ISO3166 codes.
 
 ```{r example}
 library(neogeonames)
-geo <- neogeonames::adminify("USA: Virginia, Fairfax County", delim = "[:,]")
+geo <- neogeonames::adminify("USA: Fairfax County, Virginia", delim = "[:,]")
 geo
 paste(Filter(Negate(is.na), geo$ac), collapse = ".")
 ```

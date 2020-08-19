@@ -31,7 +31,7 @@ misspelled place name into a set of ISO3166 codes.
 
 ``` r
 library(neogeonames)
-geo <- neogeonames::adminify("USA: Virginia, Fairfax County", delim = "[:,]")
+geo <- neogeonames::adminify("USA: Fairfax County, Virginia", delim = "[:,]")
 geo
 #> $id
 #>     ac0     ac1     ac2     ac3     ac4 
