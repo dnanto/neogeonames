@@ -10,11 +10,11 @@
 #' Map admin key to feature codes...
 #' @export
 akfc <- list(
-  ac0 = c("TERR", "PCL", "PCLF", "PCLD", "PCLS", "PCLH", "PCLI"),
-  ac1 = c("PPLC", "PPLA", "ADM1H", "ADM1"),
-  ac2 = c("PPLA2", "ADM2H", "ADM2"),
-  ac3 = c("PPLA3", "ADM3H", "ADM3"),
-  ac4 = c("PPLA4", "ADM4H", "ADM4")
+  ac0 = c("PCLI", "PCLH" ,"PCLS", "PCLD" ,"PCLF" ,"PCL"  ,"TERR"),
+  ac1 = c("ADM1" , "ADM1H" ,"PPLA" , "PPLC" ),
+  ac2 = c("ADM2"  ,"ADM2H" ,"PPLA2"),
+  ac3 = c("ADM3"  ,"ADM3H" ,"PPLA3"),
+  ac4 = c("ADM4",  "ADM4H", "PPLA4")
 )
 
 #' Map admin key to admin column...
@@ -97,7 +97,7 @@ geonamify <- function(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, 
       # in
       dfgeo <- dfgeo[dfgeo[[key]] %in% where[[key]], ]
       # order by
-      dfgeo <- dfgeo[match(where[[key]], dfgeo[[key]]), ]
+      dfgeo <- dfgeo[order(ordered(dfgeo[[key]], levels = where[[key]])), ]
       # remove non-match
       dfgeo <- dfgeo[!is.na(dfgeo$geonameid), ]
     }
