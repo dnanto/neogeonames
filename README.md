@@ -9,8 +9,9 @@
 
 The goal of neogeonames is to provide a useful subset of the [GeoNames
 Gazetteer Data](http://download.geonames.org/export/dump/) with
-functions to infer <https://en.wikipedia.org/wiki/ISO_3166> codes for
-place name queries in a hierarchical manner without a REST API.
+functions to infer [ISO3166](https://en.wikipedia.org/wiki/ISO_3166)
+codes for place name queries in a hierarchical manner without a REST
+API.
 
 ## Installation
 
