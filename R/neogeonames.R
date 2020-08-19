@@ -10,11 +10,11 @@
 #' Map admin key to feature codes...
 #' @export
 akfc <- list(
-  ac0 = c("PCLI", "PCLH" ,"PCLS", "PCLD" ,"PCLF" ,"PCL"  ,"TERR"),
-  ac1 = c("ADM1" , "ADM1H" ,"PPLA" , "PPLC" ),
-  ac2 = c("ADM2"  ,"ADM2H" ,"PPLA2"),
-  ac3 = c("ADM3"  ,"ADM3H" ,"PPLA3"),
-  ac4 = c("ADM4",  "ADM4H", "PPLA4")
+  ac0 = c("PCLI", "PCLH", "PCLS", "PCLD", "PCLF", "PCL", "TERR"),
+  ac1 = c("ADM1", "ADM1H", "PPLA", "PPLC"),
+  ac2 = c("ADM2", "ADM2H", "PPLA2"),
+  ac3 = c("ADM3", "ADM3H", "PPLA3"),
+  ac4 = c("ADM4", "ADM4H", "PPLA4")
 )
 
 #' Map admin key to admin column...
@@ -79,17 +79,6 @@ countrify <- function(query, dfcou = neogeonames::country, n = 1, ...) {
 #' @return The rows or \code{data.frame} with 0 rows.
 #' @export
 geonamify <- function(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, ...) {
-  # where asciiname
-  dfgeo <- dfgeo[toupper(dfgeo$asciiname) == toupper(query), ]
-
-  # like asciiname
-  if (nrow(dfgeo) == 0 && n > 0) {
-    idx <- agrep(query, dfgeo$asciiname, ignore.case = T, ...)
-    if (!identical(idx, integer(0)) & length(idx) <= n) {
-      dfgeo <- dfgeo[idx[[1]], ]
-    }
-  }
-
   # where
   for (key in names(where))
   {
@@ -104,6 +93,17 @@ geonamify <- function(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, 
     else {
       break
     }
+  }
+
+  df <- dfgeo
+  # where asciiname
+  dfgeo <- dfgeo[toupper(dfgeo$asciiname) == toupper(query), ]
+
+  # like asciiname
+  if (nrow(dfgeo) == 0 && n > 0) {
+    dfgeo <- df
+    idx <- agrep(query, dfgeo$asciiname, ignore.case = T, ...)
+    dfgeo <- if (!identical(idx, integer(0)) && length(idx) <= n) dfgeo[idx, ] else geoname[0, ]
   }
 
   dfgeo
@@ -140,7 +140,10 @@ adminify <- function(query, delim, dfgeo = neogeonames::geoname, dfcou = neogeon
   }
 
   # subset ac0
-  if (!is.na(geo.ac[["ac0"]])) dfgeo <- dfgeo[which(dfgeo$country_code == geo.ac[["ac0"]]), ]
+  if (!is.na(geo.ac[["ac0"]])) {
+    dfgeo <- dfgeo[which(dfgeo$country_code == geo.ac[["ac0"]]), ]
+    tokens <- tokens[-idx]
+  }
 
   keys <- geo.ac[(1 + !is.na(geo.ac[["ac0"]])):length(geo.ac)]
 

@@ -43,6 +43,19 @@ paste(Filter(Negate(is.na), geo$ac), collapse = ".")
 #> [1] "US.VA.059"
 ```
 
+It also works with misspelled names.
+
+``` r
+neogeonames::adminify("USA: Furfax County, Virginia", delim = "[:,]")
+#> $id
+#>     ac0     ac1     ac2     ac3     ac4 
+#> 6252001 6254928 4758041      NA      NA 
+#> 
+#> $ac
+#>   ac0   ac1   ac2   ac3   ac4 
+#>  "US"  "VA" "059"    NA    NA
+```
+
 Use the geonameid to get the coordinates.
 
 ``` r
