@@ -85,7 +85,7 @@ geonamify <- function(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, 
     if (nrow(dfgeo) > 0) {
       # in
       dfgeo <- dfgeo[dfgeo[[key]] %in% where[[key]], ]
-      # order by
+      # order by (https://stackoverflow.com/a/42605492)
       dfgeo <- dfgeo[order(ordered(dfgeo[[key]], levels = where[[key]])), ]
       # remove non-match
       dfgeo <- dfgeo[!is.na(dfgeo$geonameid), ]
@@ -103,31 +103,28 @@ geonamify <- function(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, 
   if (nrow(dfgeo) == 0 && n > 0) {
     dfgeo <- df
     idx <- agrep(query, dfgeo$asciiname, ignore.case = T, ...)
-    dfgeo <- if (!identical(idx, integer(0)) && length(idx) <= n) dfgeo[idx, ] else geoname[0, ]
+    dfgeo <- if (!identical(idx, integer(0)) && length(idx) <= n) dfgeo[idx, ] else neogeonames::geoname[0, ]
   }
 
   dfgeo
 }
 
-#' Calculate administrative division codes by splitting on a delimiter pattern.
+#' Calculate an administrative division codes for each token according to hierarchy.
 #'
-#' This function infers an admin code and geonameid for each token.
+#' This function infers an admin code and geonameid for each token in order from left-to-right.
 #'
-#' @param query The place name query.
-#' @param delim The delimiter pattern.
-#' @param dfgeo The data frame of \code{\link{geoname}} data.
-#' @param dfcou The data frame of \code{\link{country}} data.
+#' @param tokens The place name query tokens.
 #' @param ... The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.
-#' @seealso \code{\link{geonamify}}
+#' @seealso \code{\link{adminify}}
 #' @return The list with "id" and "ac" atomic vectors consisting of the geonameid and
 #'         administrative class division values or \code{NA} values if missing.
 #' @export
-adminify <- function(query, delim, dfgeo = neogeonames::geoname, dfcou = neogeonames::country, ...) {
+adminify_tokens <- function(tokens, ...) {
+  dfgeo <- neogeonames::geoname
+  dfcou <- neogeonames::country
+
   geo.ac <- sapply(akac, function(ele) NA)
   geo.id <- sapply(akac, function(ele) NA)
-  tokens <- stringr::str_trim(stringr::str_split(query, delim, simplify = T))
-  tokens <- Filter(nchar, tokens)
-  tokens <- tokens[!is.na(tokens)]
 
   # countrify
   for (idx in seq_along(tokens))
@@ -175,4 +172,44 @@ adminify <- function(query, delim, dfgeo = neogeonames::geoname, dfcou = neogeon
   }
 
   list(id = geo.id, ac = geo.ac)
+}
+
+#' Calculate an administrative division codes for each token according to hierarchy using a delimiter.
+#'
+#' This function infers an admin code and geonameid for each token in order from left-to-right.
+#'
+#' @param query The place name query.
+#' @param delim The delimiter pattern.
+#' @param ... The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.
+#' @seealso \code{\link{adminify_tokens}}
+#' @return The list with "id" and "ac" atomic vectors consisting of the geonameid and
+#'         administrative class division values or \code{NA} values if missing.
+#' @export
+adminify <- function(query, delim = " ", ...) {
+  tokens <- query#if(!is.character(query)) "" else query
+
+  if (nchar(delim) > 0) {
+    tokens <- stringr::str_trim(stringr::str_split(query, delim, simplify = T))
+    tokens <- Filter(nchar, tokens)
+    tokens <- tokens[!is.na(tokens)]
+  }
+
+  results <- c()
+  imax <- 1
+  if (length(tokens) > 1) {
+    for (i in seq_along(tokens))
+    {
+      results[[i]] <- adminify_tokens(c(utils::tail(tokens, -i), utils::head(tokens, i)), ...)
+      n <- length(Filter(Negate(is.na), results[[i]]$id))
+      imax <- max(i, imax)
+      if (n == length(tokens)) {
+        break
+      }
+    }
+  }
+  else {
+    results[[imax]] <- adminify_tokens(tokens, ...)
+  }
+
+  results[[imax]]
 }
