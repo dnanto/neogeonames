@@ -4,7 +4,13 @@
 \alias{geonamify}
 \title{Calculate the \code{\link{geoname}} rows.}
 \usage{
-geonamify(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, ...)
+geonamify(
+  query,
+  dfgeo = neogeonames::geoname,
+  where = NULL,
+  n = 1,
+  p = list(ignore.case = T)
+)
 }
 \arguments{
 \item{query}{The place name query.}
@@ -16,7 +22,7 @@ geonamify(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, ...)
 \item{n}{The number of allowable fuzzy search results before returning the top result,
 otherwise return nothing if exceeded.}
 
-\item{...}{The parameters for \code{\link{agrep}}.}
+\item{p}{The parameters for \code{\link{agrep}}.}
 }
 \value{
 The rows or \code{data.frame} with 0 rows.

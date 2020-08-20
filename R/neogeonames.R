@@ -36,11 +36,11 @@ akac <- c(
 #' @param dfcou The data frame of \code{\link{country}} data.
 #' @param n The number of allowable fuzzy search results before returning the top result,
 #'          otherwise nothing.
-#' @param ... The parameters for \code{\link{agrep}}.
+#' @param p The parameters for \code{\link{agrep}}.
 #' @seealso \code{\link{agrep}}
 #' @return The rows or \code{data.frame} with 0 rows.
 #' @export
-countrify <- function(query, dfcou = neogeonames::country, n = 1, ...) {
+countrify <- function(query, dfcou = neogeonames::country, n = 1, p = list(ignore.case = T)) {
   idx <- NULL
 
   query <- toupper(query)
@@ -56,7 +56,7 @@ countrify <- function(query, dfcou = neogeonames::country, n = 1, ...) {
     idx <- idx.m
   } # fuzzy search
   else if (n > 0) {
-    idx.m <- agrep(query, dfcou$country, ignore.case = T, ...)
+    idx.m <- do.call(agrep, c(list(query, dfcou$country), p))
     if (!identical(idx.m, integer(0)) & length(idx.m) <= n) {
       idx <- idx.m[[1]]
     }
@@ -74,11 +74,11 @@ countrify <- function(query, dfcou = neogeonames::country, n = 1, ...) {
 #' @param where The named vector of values analogous to the SQL "WHERE" clause.
 #' @param n The number of allowable fuzzy search results before returning the top result,
 #'          otherwise return nothing if exceeded.
-#' @param ... The parameters for \code{\link{agrep}}.
+#' @param p The parameters for \code{\link{agrep}}.
 #' @seealso \code{\link{agrep}}
 #' @return The rows or \code{data.frame} with 0 rows.
 #' @export
-geonamify <- function(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, ...) {
+geonamify <- function(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, p = list(ignore.case = T)) {
   # where
   for (key in names(where))
   {
@@ -95,18 +95,16 @@ geonamify <- function(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, 
     }
   }
 
-  df <- dfgeo
   # where asciiname
-  dfgeo <- dfgeo[toupper(dfgeo$asciiname) == toupper(query), ]
+  res <- dfgeo[toupper(dfgeo$asciiname) == toupper(query), ]
 
   # like asciiname
-  if (nrow(dfgeo) == 0 && n > 0) {
-    dfgeo <- df
-    idx <- agrep(query, dfgeo$asciiname, ignore.case = T, ...)
-    dfgeo <- if (!identical(idx, integer(0)) && length(idx) <= n) dfgeo[idx, ] else neogeonames::geoname[0, ]
+  if (nrow(res) == 0 && n > 0) {
+    idx <- do.call(agrep, c(list(query, dfgeo$asciiname), p))
+    res <- if (!identical(idx, integer(0)) && length(idx) <= n) dfgeo[idx, ] else neogeonames::geoname[0, ]
   }
 
-  dfgeo
+  res
 }
 
 #' Calculate an administrative division codes for each token according to hierarchy.
@@ -114,56 +112,55 @@ geonamify <- function(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, 
 #' This function infers an admin code and geonameid for each token in order from left-to-right.
 #'
 #' @param tokens The place name query tokens.
-#' @param ... The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.
+#' @param admin The admin codes to search.
+#' @param p The parameters for \code{\link{agrep}}.
 #' @seealso \code{\link{adminify}}
 #' @return The list with "id" and "ac" atomic vectors consisting of the geonameid and
 #'         administrative class division values or \code{NA} values if missing.
 #' @export
-adminify_tokens <- function(tokens, ...) {
+adminify_tokens <- function(tokens, admin = akac, p = list(ignore.case = T)) {
   dfgeo <- neogeonames::geoname
   dfcou <- neogeonames::country
 
-  geo.ac <- sapply(akac, function(ele) NA)
-  geo.id <- sapply(akac, function(ele) NA)
+  geo.ac <- sapply(admin, function(ele) NA)
+  geo.id <- sapply(admin, function(ele) NA)
 
   # countrify
-  for (idx in seq_along(tokens))
-  {
-    rows <- countrify(tokens[idx], dfcou = dfcou, ...)
-    if (!is.na(geo.ac[["ac0"]] <- rows$iso[1])) {
-      geo.id[["ac0"]] <- rows$geonameid[1]
-      break
+  if ("ac0" %in% names(admin)) {
+    for (idx in seq_along(tokens)) {
+      rows <- countrify(tokens[idx], dfcou, n = 1, p = p)
+      if (!is.na(geo.ac[["ac0"]] <- rows$iso[1])) {
+        geo.id[["ac0"]] <- rows$geonameid[1]
+        break
+      }
     }
   }
 
   # subset ac0
-  if (!is.na(geo.ac[["ac0"]])) {
+  if ("ac0" %in% names(geo.ac) && !is.na(geo.ac[["ac0"]])) {
     dfgeo <- dfgeo[which(dfgeo$country_code == geo.ac[["ac0"]]), ]
     tokens <- tokens[-idx]
+    admin <- admin[names(admin) != "ac0"]
   }
 
-  keys <- geo.ac[(1 + !is.na(geo.ac[["ac0"]])):length(geo.ac)]
-
-  for (key in names(keys))
-  {
+  for (key in names(admin)) {
     # params to restrict feature code to admin level
     params <- list(feature_code = akfc[[key]])
-    for (idx in seq_along(tokens))
-    {
+    for (idx in seq_along(tokens)) {
       # check if perfect match to admin column
-      rows <- dfgeo[which(dfgeo[akac[[key]]] == toupper(tokens[idx])), ]
-      val <- rows[[akac[key]]][1]
+      rows <- dfgeo[which(dfgeo[admin[[key]]] == toupper(tokens[idx])), ]
+      val <- rows[[admin[key]]][1]
       # otherwise geonamify using previous results
       if (is.na(val)) {
-        rows <- geonamify(tokens[idx], dfgeo, params, ...)
-        val <- rows[[akac[key]]][1]
+        rows <- geonamify(tokens[idx], dfgeo, params, p)
+        val <- rows[[admin[key]]][1]
       }
       if (!is.na(val)) {
         # save
         geo.ac[[key]] <- val
         geo.id[[key]] <- rows$geonameid[1]
         # subset
-        dfgeo <- dfgeo[which(dfgeo[[akac[key]]] == geo.ac[[key]]), ]
+        dfgeo <- dfgeo[which(dfgeo[[admin[key]]] == geo.ac[[key]]), ]
         # remove token
         tokens <- tokens[-idx]
         break
@@ -180,13 +177,14 @@ adminify_tokens <- function(tokens, ...) {
 #'
 #' @param query The place name query.
 #' @param delim The delimiter pattern.
-#' @param ... The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.
+#' @param admin The admin codes to search.
+#' @param p The parameters for \code{\link{agrep}}.
 #' @seealso \code{\link{adminify_tokens}}
 #' @return The list with "id" and "ac" atomic vectors consisting of the geonameid and
 #'         administrative class division values or \code{NA} values if missing.
 #' @export
-adminify <- function(query, delim = " ", ...) {
-  tokens <- query#if(!is.character(query)) "" else query
+adminify <- function(query, delim = " ", admin = akac, p = list(ignore.case = T)) {
+  tokens <- query
 
   if (nchar(delim) > 0) {
     tokens <- stringr::str_trim(stringr::str_split(query, delim, simplify = T))
@@ -197,9 +195,8 @@ adminify <- function(query, delim = " ", ...) {
   results <- c()
   imax <- 1
   if (length(tokens) > 1) {
-    for (i in seq_along(tokens))
-    {
-      results[[i]] <- adminify_tokens(c(utils::tail(tokens, -i), utils::head(tokens, i)), ...)
+    for (i in seq_along(tokens)) {
+      results[[i]] <- adminify_tokens(c(utils::tail(tokens, -i), utils::head(tokens, i)), admin, p)
       n <- length(Filter(Negate(is.na), results[[i]]$id))
       imax <- max(i, imax)
       if (n == length(tokens)) {
@@ -208,7 +205,7 @@ adminify <- function(query, delim = " ", ...) {
     }
   }
   else {
-    results[[imax]] <- adminify_tokens(tokens, ...)
+    results[[imax]] <- adminify_tokens(tokens, admin, p)
   }
 
   results[[imax]]

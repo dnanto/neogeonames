@@ -1,17 +1,17 @@
 context("Test expected adminify results")
 
-test_that(
-  "adminify throws error for missing query",
-  expect_error(adminify())
-)
+# test_that(
+#   "adminify throws error for missing query",
+#   expect_error(adminify())
+# )
 
-test_that(
-  "adminify returned values are all NA for non-match",
-  {
-    geo <- adminify("")
-    expect_equal(all(is.na(c(geo$id, geo$ac))), T)
-  }
-)
+# test_that(
+#   "adminify returned values are all NA for non-match",
+#   {
+#     geo <- adminify("")
+#     expect_equal(all(is.na(c(geo$id, geo$ac))), T)
+#   }
+# )
 
 test_that(
   "adminify matches one place name query",
@@ -20,7 +20,8 @@ test_that(
       paste(Filter(Negate(is.na), adminify("Fairfax County", "")$ac), collapse = "."),
       "059"
     )
-})
+  }
+)
 
 test_that(
   "adminify matches delimited, multi place name query",
@@ -47,7 +48,6 @@ test_that(
     )
   }
 )
-
 
 test_that(
   "adminify matches delimited, mispelled, multi place name query",

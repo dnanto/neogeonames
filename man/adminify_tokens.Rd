@@ -4,12 +4,14 @@
 \alias{adminify_tokens}
 \title{Calculate an administrative division codes for each token according to hierarchy.}
 \usage{
-adminify_tokens(tokens, ...)
+adminify_tokens(tokens, admin = akac, p = list(ignore.case = T))
 }
 \arguments{
 \item{tokens}{The place name query tokens.}
 
-\item{...}{The arguments passed to \code{\link{countrify}} and \code{\link{geonamify}}.}
+\item{admin}{The admin codes to search.}
+
+\item{p}{The parameters for \code{\link{agrep}}.}
 }
 \value{
 The list with "id" and "ac" atomic vectors consisting of the geonameid and

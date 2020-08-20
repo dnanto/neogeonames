@@ -4,7 +4,12 @@
 \alias{countrify}
 \title{Calculate the \code{\link{country}} row.}
 \usage{
-countrify(query, dfcou = neogeonames::country, n = 1, ...)
+countrify(
+  query,
+  dfcou = neogeonames::country,
+  n = 1,
+  p = list(ignore.case = T)
+)
 }
 \arguments{
 \item{query}{The country query.}
@@ -14,7 +19,7 @@ countrify(query, dfcou = neogeonames::country, n = 1, ...)
 \item{n}{The number of allowable fuzzy search results before returning the top result,
 otherwise nothing.}
 
-\item{...}{The parameters for \code{\link{agrep}}.}
+\item{p}{The parameters for \code{\link{agrep}}.}
 }
 \value{
 The rows or \code{data.frame} with 0 rows.
