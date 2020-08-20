@@ -7,10 +7,10 @@ df.ac <- data.frame(id = 1:length(geo), country = country, do.call(rbind, lapply
 df.id <- data.frame(id = 1:length(geo), country = country, do.call(rbind, lapply(geo, `[[`, "id")))
 
 ## -----------------------------------------------------------------------------
-head(df.ac)
+knitr::kable(head(df.ac))
 
 ## -----------------------------------------------------------------------------
-head(df.id)
+knitr::kable(head(df.id))
 
 ## -----------------------------------------------------------------------------
 # remove rows with missing country_code
@@ -31,5 +31,6 @@ df.coor <- merge(
 # merge with admin codes and original data
 df.coor <- merge(df.ac, df.coor, by = "id", all.x = T)
 df.geo <- merge(df, df.coor[2:ncol(df.coor)], by = "country", all.x = T)
-head(unique(df.geo[c("country", "ac0", "ac1", "ac2", "ac3", "ac4", "latitude", "longitude")]))
+keys <- c("country", "ac0", "ac1", "ac2", "ac3", "ac4", "latitude", "longitude")
+knitr::kable(head(unique(df.geo[keys])))
 

@@ -23,13 +23,13 @@ df.id <- data.frame(id = 1:length(geo), country = country, do.call(rbind, lapply
 View the admin codes.
 
 ```{r}
-head(df.ac)
+knitr::kable(head(df.ac))
 ```
 
 View the "geonameid" associated with each admin code.
 
 ```{r}
-head(df.id)
+knitr::kable(head(df.id))
 ```
 
 Merge coordinate data with the admin code results and back with the original data.
@@ -53,5 +53,6 @@ df.coor <- merge(
 # merge with admin codes and original data
 df.coor <- merge(df.ac, df.coor, by = "id", all.x = T)
 df.geo <- merge(df, df.coor[2:ncol(df.coor)], by = "country", all.x = T)
-head(unique(df.geo[c("country", "ac0", "ac1", "ac2", "ac3", "ac4", "latitude", "longitude")]))
+keys <- c("country", "ac0", "ac1", "ac2", "ac3", "ac4", "latitude", "longitude")
+knitr::kable(head(unique(df.geo[keys])))
 ```

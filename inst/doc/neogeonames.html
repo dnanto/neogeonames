@@ -343,50 +343,251 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb1-5"><a href="#cb1-5"></a>df.ac &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">id =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(geo), <span class="dt">country =</span> country, <span class="kw">do.call</span>(rbind, <span class="kw">lapply</span>(geo, <span class="st">`</span><span class="dt">[[</span><span class="st">`</span>, <span class="st">&quot;ac&quot;</span>)))</span>
 <span id="cb1-6"><a href="#cb1-6"></a>df.id &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">id =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(geo), <span class="dt">country =</span> country, <span class="kw">do.call</span>(rbind, <span class="kw">lapply</span>(geo, <span class="st">`</span><span class="dt">[[</span><span class="st">`</span>, <span class="st">&quot;id&quot;</span>)))</span></code></pre></div>
 <p>View the admin codes.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">head</span>(df.ac)</span></code></pre></div>
-<pre><code>##   id               country ac0  ac1  ac2  ac3  ac4
-## 1  1                 China  CN &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;
-## 2  2      China: Guangzhou  CN   30 &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;
-## 3  3           South Korea  KR &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;
-## 4  4             Argentina  AR &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;
-## 5  5 China: Shanxi, Qishan  CN &lt;NA&gt; 3306 &lt;NA&gt; &lt;NA&gt;
-## 6  6                Taiwan  TW &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(df.ac))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="left">country</th>
+<th align="left">ac0</th>
+<th align="left">ac1</th>
+<th align="left">ac2</th>
+<th align="left">ac3</th>
+<th align="left">ac4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">China</td>
+<td align="left">CN</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">China: Guangzhou</td>
+<td align="left">CN</td>
+<td align="left">30</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">South Korea</td>
+<td align="left">KR</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">Argentina</td>
+<td align="left">AR</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">China: Shanxi, Qishan</td>
+<td align="left">CN</td>
+<td align="left">NA</td>
+<td align="left">3306</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">Taiwan</td>
+<td align="left">TW</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
 <p>View the “geonameid” associated with each admin code.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">head</span>(df.id)</span></code></pre></div>
-<pre><code>##   id               country     ac0     ac1     ac2 ac3 ac4
-## 1  1                 China 1814991      NA      NA  NA  NA
-## 2  2      China: Guangzhou 1814991 1809858      NA  NA  NA
-## 3  3           South Korea 1835841      NA      NA  NA  NA
-## 4  4             Argentina 3865483      NA      NA  NA  NA
-## 5  5 China: Shanxi, Qishan 1814991      NA 1795854  NA  NA
-## 6  6                Taiwan 1668284      NA      NA  NA  NA</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(df.id))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="left">country</th>
+<th align="right">ac0</th>
+<th align="right">ac1</th>
+<th align="right">ac2</th>
+<th align="right">ac3</th>
+<th align="right">ac4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">China</td>
+<td align="right">1814991</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">China: Guangzhou</td>
+<td align="right">1814991</td>
+<td align="right">1809858</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">South Korea</td>
+<td align="right">1835841</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">Argentina</td>
+<td align="right">3865483</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">China: Shanxi, Qishan</td>
+<td align="right">1814991</td>
+<td align="right">NA</td>
+<td align="right">1795854</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">Taiwan</td>
+<td align="right">1668284</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
 <p>Merge coordinate data with the admin code results and back with the original data.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># remove rows with missing country_code</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a>df.coor &lt;-<span class="st"> </span>df.id[<span class="op">!</span><span class="kw">is.na</span>(df.id<span class="op">$</span>ac0), ]</span>
-<span id="cb6-3"><a href="#cb6-3"></a><span class="co"># set admin codes with no parent code to NA, since they lack support</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a>df.coor &lt;-<span class="st"> </span><span class="kw">apply</span>(<span class="kw">cbind</span>(df.coor, <span class="ot">NA</span>), <span class="dv">1</span>, <span class="cf">function</span>(row) </span>
-<span id="cb6-5"><a href="#cb6-5"></a>  <span class="cf">if</span> (<span class="op">!</span><span class="kw">is.na</span>(j &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">is.na</span>(row))[<span class="dv">1</span>])) row[j <span class="op">-</span><span class="st"> </span><span class="dv">1</span>]</span>
-<span id="cb6-6"><a href="#cb6-6"></a>)</span>
-<span id="cb6-7"><a href="#cb6-7"></a></span>
-<span id="cb6-8"><a href="#cb6-8"></a><span class="co"># merge coordinate data</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a>df.coor &lt;-<span class="st"> </span><span class="kw">merge</span>(</span>
-<span id="cb6-10"><a href="#cb6-10"></a>  <span class="kw">data.frame</span>(<span class="dt">id =</span> <span class="kw">names</span>(df.coor), <span class="dt">geonameid =</span> df.coor),</span>
-<span id="cb6-11"><a href="#cb6-11"></a>  neogeonames<span class="op">::</span>geoname[<span class="kw">c</span>(<span class="st">&quot;geonameid&quot;</span>, <span class="st">&quot;latitude&quot;</span>, <span class="st">&quot;longitude&quot;</span>)],</span>
-<span id="cb6-12"><a href="#cb6-12"></a>  <span class="dt">by =</span> <span class="st">&quot;geonameid&quot;</span>,</span>
-<span id="cb6-13"><a href="#cb6-13"></a>  <span class="dt">all.x =</span> T</span>
-<span id="cb6-14"><a href="#cb6-14"></a>)</span>
-<span id="cb6-15"><a href="#cb6-15"></a></span>
-<span id="cb6-16"><a href="#cb6-16"></a><span class="co"># merge with admin codes and original data</span></span>
-<span id="cb6-17"><a href="#cb6-17"></a>df.coor &lt;-<span class="st"> </span><span class="kw">merge</span>(df.ac, df.coor, <span class="dt">by =</span> <span class="st">&quot;id&quot;</span>, <span class="dt">all.x =</span> T)</span>
-<span id="cb6-18"><a href="#cb6-18"></a>df.geo &lt;-<span class="st"> </span><span class="kw">merge</span>(df, df.coor[<span class="dv">2</span><span class="op">:</span><span class="kw">ncol</span>(df.coor)], <span class="dt">by =</span> <span class="st">&quot;country&quot;</span>, <span class="dt">all.x =</span> T)</span>
-<span id="cb6-19"><a href="#cb6-19"></a><span class="kw">head</span>(<span class="kw">unique</span>(df.geo[<span class="kw">c</span>(<span class="st">&quot;country&quot;</span>, <span class="st">&quot;ac0&quot;</span>, <span class="st">&quot;ac1&quot;</span>, <span class="st">&quot;ac2&quot;</span>, <span class="st">&quot;ac3&quot;</span>, <span class="st">&quot;ac4&quot;</span>, <span class="st">&quot;latitude&quot;</span>, <span class="st">&quot;longitude&quot;</span>)]))</span></code></pre></div>
-<pre><code>##                country ac0  ac1  ac2  ac3  ac4 latitude longitude
-## 1            Argentina  AR &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; -34.0000 -64.00000
-## 67  Argentina: Cordoba  AR   05 &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; -31.4135 -64.18105
-## 68           Australia  AU &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; -25.0000 135.00000
-## 81          Bangladesh  BD &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;  24.0000  90.00000
-## 85   Bangladesh: Dhaka  BD   81 &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;  23.7104  90.40744
-## 103             Brazil  BR &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; -10.0000 -55.00000</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># remove rows with missing country_code</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>df.coor &lt;-<span class="st"> </span>df.id[<span class="op">!</span><span class="kw">is.na</span>(df.id<span class="op">$</span>ac0), ]</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co"># set admin codes with no parent code to NA, since they lack support</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>df.coor &lt;-<span class="st"> </span><span class="kw">apply</span>(<span class="kw">cbind</span>(df.coor, <span class="ot">NA</span>), <span class="dv">1</span>, <span class="cf">function</span>(row) </span>
+<span id="cb4-5"><a href="#cb4-5"></a>  <span class="cf">if</span> (<span class="op">!</span><span class="kw">is.na</span>(j &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">is.na</span>(row))[<span class="dv">1</span>])) row[j <span class="op">-</span><span class="st"> </span><span class="dv">1</span>]</span>
+<span id="cb4-6"><a href="#cb4-6"></a>)</span>
+<span id="cb4-7"><a href="#cb4-7"></a></span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co"># merge coordinate data</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a>df.coor &lt;-<span class="st"> </span><span class="kw">merge</span>(</span>
+<span id="cb4-10"><a href="#cb4-10"></a>  <span class="kw">data.frame</span>(<span class="dt">id =</span> <span class="kw">names</span>(df.coor), <span class="dt">geonameid =</span> df.coor),</span>
+<span id="cb4-11"><a href="#cb4-11"></a>  neogeonames<span class="op">::</span>geoname[<span class="kw">c</span>(<span class="st">&quot;geonameid&quot;</span>, <span class="st">&quot;latitude&quot;</span>, <span class="st">&quot;longitude&quot;</span>)],</span>
+<span id="cb4-12"><a href="#cb4-12"></a>  <span class="dt">by =</span> <span class="st">&quot;geonameid&quot;</span>,</span>
+<span id="cb4-13"><a href="#cb4-13"></a>  <span class="dt">all.x =</span> T</span>
+<span id="cb4-14"><a href="#cb4-14"></a>)</span>
+<span id="cb4-15"><a href="#cb4-15"></a></span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="co"># merge with admin codes and original data</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a>df.coor &lt;-<span class="st"> </span><span class="kw">merge</span>(df.ac, df.coor, <span class="dt">by =</span> <span class="st">&quot;id&quot;</span>, <span class="dt">all.x =</span> T)</span>
+<span id="cb4-18"><a href="#cb4-18"></a>df.geo &lt;-<span class="st"> </span><span class="kw">merge</span>(df, df.coor[<span class="dv">2</span><span class="op">:</span><span class="kw">ncol</span>(df.coor)], <span class="dt">by =</span> <span class="st">&quot;country&quot;</span>, <span class="dt">all.x =</span> T)</span>
+<span id="cb4-19"><a href="#cb4-19"></a>keys &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;country&quot;</span>, <span class="st">&quot;ac0&quot;</span>, <span class="st">&quot;ac1&quot;</span>, <span class="st">&quot;ac2&quot;</span>, <span class="st">&quot;ac3&quot;</span>, <span class="st">&quot;ac4&quot;</span>, <span class="st">&quot;latitude&quot;</span>, <span class="st">&quot;longitude&quot;</span>)</span>
+<span id="cb4-20"><a href="#cb4-20"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(<span class="kw">unique</span>(df.geo[keys])))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">country</th>
+<th align="left">ac0</th>
+<th align="left">ac1</th>
+<th align="left">ac2</th>
+<th align="left">ac3</th>
+<th align="left">ac4</th>
+<th align="right">latitude</th>
+<th align="right">longitude</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">Argentina</td>
+<td align="left">AR</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">-34.0000</td>
+<td align="right">-64.00000</td>
+</tr>
+<tr class="even">
+<td align="left">67</td>
+<td align="left">Argentina: Cordoba</td>
+<td align="left">AR</td>
+<td align="left">05</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">-31.4135</td>
+<td align="right">-64.18105</td>
+</tr>
+<tr class="odd">
+<td align="left">68</td>
+<td align="left">Australia</td>
+<td align="left">AU</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">-25.0000</td>
+<td align="right">135.00000</td>
+</tr>
+<tr class="even">
+<td align="left">81</td>
+<td align="left">Bangladesh</td>
+<td align="left">BD</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">24.0000</td>
+<td align="right">90.00000</td>
+</tr>
+<tr class="odd">
+<td align="left">85</td>
+<td align="left">Bangladesh: Dhaka</td>
+<td align="left">BD</td>
+<td align="left">81</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">23.7104</td>
+<td align="right">90.40744</td>
+</tr>
+<tr class="even">
+<td align="left">103</td>
+<td align="left">Brazil</td>
+<td align="left">BR</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="right">-10.0000</td>
+<td align="right">-55.00000</td>
+</tr>
+</tbody>
+</table>
 
 
 
