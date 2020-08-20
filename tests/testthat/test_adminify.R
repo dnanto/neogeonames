@@ -1,17 +1,17 @@
 context("Test expected adminify results")
 
-# test_that(
-#   "adminify throws error for missing query",
-#   expect_error(adminify())
-# )
+test_that(
+  "adminify throws error for missing args",
+  expect_error(adminify())
+)
 
-# test_that(
-#   "adminify returned values are all NA for non-match",
-#   {
-#     geo <- adminify("")
-#     expect_equal(all(is.na(c(geo$id, geo$ac))), T)
-#   }
-# )
+test_that(
+  "adminify returned values are all NA for non-match",
+  {
+    geo <- adminify("")
+    expect_equal(all(is.na(c(geo$id, geo$ac))), T)
+  }
+)
 
 test_that(
   "adminify matches one place name query",

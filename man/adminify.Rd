@@ -4,7 +4,7 @@
 \alias{adminify}
 \title{Calculate an administrative division codes for each token according to hierarchy using a delimiter.}
 \usage{
-adminify(query, delim = " ", admin = akac, p = list(ignore.case = T))
+adminify(query, delim = " ", admin = akac, n = 1, p = list(ignore.case = T))
 }
 \arguments{
 \item{query}{The place name query.}
@@ -12,6 +12,9 @@ adminify(query, delim = " ", admin = akac, p = list(ignore.case = T))
 \item{delim}{The delimiter pattern.}
 
 \item{admin}{The admin codes to search.}
+
+\item{n}{The number of allowable fuzzy search results before returning the top result,
+otherwise nothing.}
 
 \item{p}{The parameters for \code{\link{agrep}}.}
 }

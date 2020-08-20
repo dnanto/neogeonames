@@ -113,12 +113,14 @@ geonamify <- function(query, dfgeo = neogeonames::geoname, where = NULL, n = 1, 
 #'
 #' @param tokens The place name query tokens.
 #' @param admin The admin codes to search.
+#' @param n The number of allowable fuzzy search results before returning the top result,
+#'          otherwise nothing.
 #' @param p The parameters for \code{\link{agrep}}.
 #' @seealso \code{\link{adminify}}
 #' @return The list with "id" and "ac" atomic vectors consisting of the geonameid and
 #'         administrative class division values or \code{NA} values if missing.
 #' @export
-adminify_tokens <- function(tokens, admin = akac, p = list(ignore.case = T)) {
+adminify_tokens <- function(tokens, admin = akac, n = 1, p = list(ignore.case = T)) {
   dfgeo <- neogeonames::geoname
   dfcou <- neogeonames::country
 
@@ -128,7 +130,7 @@ adminify_tokens <- function(tokens, admin = akac, p = list(ignore.case = T)) {
   # countrify
   if ("ac0" %in% names(admin)) {
     for (idx in seq_along(tokens)) {
-      rows <- countrify(tokens[idx], dfcou, n = 1, p = p)
+      rows <- countrify(tokens[idx], dfcou, n, p = p)
       if (!is.na(geo.ac[["ac0"]] <- rows$iso[1])) {
         geo.id[["ac0"]] <- rows$geonameid[1]
         break
@@ -152,7 +154,7 @@ adminify_tokens <- function(tokens, admin = akac, p = list(ignore.case = T)) {
       val <- rows[[admin[key]]][1]
       # otherwise geonamify using previous results
       if (is.na(val)) {
-        rows <- geonamify(tokens[idx], dfgeo, params, p)
+        rows <- geonamify(tokens[idx], dfgeo, params, n, p)
         val <- rows[[admin[key]]][1]
       }
       if (!is.na(val)) {
@@ -178,12 +180,14 @@ adminify_tokens <- function(tokens, admin = akac, p = list(ignore.case = T)) {
 #' @param query The place name query.
 #' @param delim The delimiter pattern.
 #' @param admin The admin codes to search.
+#' @param n The number of allowable fuzzy search results before returning the top result,
+#'          otherwise nothing.
 #' @param p The parameters for \code{\link{agrep}}.
 #' @seealso \code{\link{adminify_tokens}}
 #' @return The list with "id" and "ac" atomic vectors consisting of the geonameid and
 #'         administrative class division values or \code{NA} values if missing.
 #' @export
-adminify <- function(query, delim = " ", admin = akac, p = list(ignore.case = T)) {
+adminify <- function(query, delim = " ", admin = akac, n = 1, p = list(ignore.case = T)) {
   tokens <- query
 
   if (nchar(delim) > 0) {
@@ -196,16 +200,18 @@ adminify <- function(query, delim = " ", admin = akac, p = list(ignore.case = T)
   imax <- 1
   if (length(tokens) > 1) {
     for (i in seq_along(tokens)) {
-      results[[i]] <- adminify_tokens(c(utils::tail(tokens, -i), utils::head(tokens, i)), admin, p)
-      n <- length(Filter(Negate(is.na), results[[i]]$id))
+      results[[i]] <- adminify_tokens(
+        c(utils::tail(tokens, -i), utils::head(tokens, i)), admin, n, p
+      )
+      size <- length(Filter(Negate(is.na), results[[i]]$id))
       imax <- max(i, imax)
-      if (n == length(tokens)) {
+      if (size == length(tokens)) {
         break
       }
     }
   }
   else {
-    results[[imax]] <- adminify_tokens(tokens, admin, p)
+    results[[imax]] <- adminify_tokens(tokens, admin, n, p)
   }
 
   results[[imax]]

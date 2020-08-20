@@ -4,12 +4,15 @@
 \alias{adminify_tokens}
 \title{Calculate an administrative division codes for each token according to hierarchy.}
 \usage{
-adminify_tokens(tokens, admin = akac, p = list(ignore.case = T))
+adminify_tokens(tokens, admin = akac, n = 1, p = list(ignore.case = T))
 }
 \arguments{
 \item{tokens}{The place name query tokens.}
 
 \item{admin}{The admin codes to search.}
+
+\item{n}{The number of allowable fuzzy search results before returning the top result,
+otherwise nothing.}
 
 \item{p}{The parameters for \code{\link{agrep}}.}
 }
