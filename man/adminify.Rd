@@ -4,7 +4,7 @@
 \alias{adminify}
 \title{Calculate an administrative division codes for each token according to hierarchy using a delimiter.}
 \usage{
-adminify(query, delim = " ", admin = akac, n = 1, p = list(ignore.case = T))
+adminify(query, delim = NA, admin = akac, n = 1, p = list(ignore.case = T))
 }
 \arguments{
 \item{query}{The place name query.}

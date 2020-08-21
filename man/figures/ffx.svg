@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 611.00 540.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    line, polyline, polygon, path, rect, circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpOC4yMnw2MDUuNTJ8NTMxLjc4fDUuNDg='>
+    <rect x='8.22' y='5.48' width='597.30' height='526.30' />
+  </clipPath>
+</defs>
+<polygon points='35.37,247.43 250.04,29.40 319.49,53.63 344.75,89.97 357.38,108.13 388.95,120.25 433.15,126.30 483.66,150.53 426.83,192.92 515.22,265.60 578.37,295.88 565.73,326.17 572.06,368.56 572.06,386.73 546.80,404.90 534.17,410.95 483.66,429.12 471.03,441.24 464.71,471.52 439.46,489.69 382.63,507.86 388.95,465.46 376.32,453.35 351.06,447.30 319.49,410.95 275.30,398.84 237.41,386.73 212.15,386.73 180.59,356.45 149.01,295.88 123.77,295.88 92.20,295.88 79.57,289.83 60.62,253.49 35.37,247.43 ' style='stroke-width: 1.07; stroke: none; fill: #3F562A;' clip-path='url(#cpOC4yMnw2MDUuNTJ8NTMxLjc4fDUuNDg=)' />
+<defs>
+  <clipPath id='cpMC4wMHw2MTEuMDB8NTQwLjAwfDAuMDA='>
+    <rect x='0.00' y='0.00' width='611.00' height='540.00' />
+  </clipPath>
+</defs>
+</svg>

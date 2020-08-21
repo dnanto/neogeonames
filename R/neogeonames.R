@@ -136,13 +136,12 @@ adminify_tokens <- function(tokens, admin = akac, n = 1, p = list(ignore.case = 
         break
       }
     }
-  }
-
-  # subset ac0
-  if ("ac0" %in% names(geo.ac) && !is.na(geo.ac[["ac0"]])) {
-    dfgeo <- dfgeo[which(dfgeo$country_code == geo.ac[["ac0"]]), ]
-    tokens <- tokens[-idx]
-    admin <- admin[names(admin) != "ac0"]
+    # subset ac0
+    if (!is.na(geo.ac[["ac0"]])) {
+      dfgeo <- dfgeo[which(dfgeo$country_code == geo.ac[["ac0"]]), ]
+      tokens <- tokens[-idx]
+      admin <- admin[names(admin) != "ac0"]
+    }
   }
 
   for (key in names(admin)) {
