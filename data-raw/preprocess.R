@@ -60,9 +60,14 @@ geonames_install <- function(burl = "http://download.geonames.org/export/dump") 
     # P city, village,...
     "PPLA", "PPLA2", "PPLA3", "PPLA4", "PPLC"
   )
+  keys <- c(
+    "geonameid", "name", "asciiname", "latitude", "longitude",
+    "feature_code", "country_code", "admin1_code", "admin2_code", "admin3_code", "admin4_code",
+    "modification_date"
+    )
   geoname <- readr::read_tsv_chunked(
     destfile,
-    readr::DataFrameCallback$new(function(x, pos) x[x$feature_code %in% feature_codes, ]),
+    readr::DataFrameCallback$new(function(x, pos) x[x$feature_code %in% feature_codes, keys]),
     chunk_size = 1000000,
     col_names = names(fields.geoname),
     col_types = paste(fields.geoname, collapse = ""),
