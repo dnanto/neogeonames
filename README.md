@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![License:
-MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
+MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dnanto/neogeonames/blob/master/LICENSE)
 [![](https://img.shields.io/badge/devel%20version-0.0.0.9000-blue.svg)](https://github.com/dnanto/neogeonames)
 <!-- badges: end -->
 
