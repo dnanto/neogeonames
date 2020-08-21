@@ -187,14 +187,11 @@ adminify_tokens <- function(tokens, admin = akac, n = 1, p = list(ignore.case = 
 #' @return The list with "id" and "ac" atomic vectors consisting of the geonameid and
 #'         administrative class division values or \code{NA} values if missing.
 #' @export
-adminify <- function(query, delim = " ", admin = akac, n = 1, p = list(ignore.case = T)) {
+adminify <- function(query, delim = NA, admin = akac, n = 1, p = list(ignore.case = T)) {
   tokens <- query
-
-  if (nchar(delim) > 0) {
-    tokens <- stringr::str_trim(stringr::str_split(query, delim, simplify = T))
-    tokens <- Filter(nchar, tokens)
-    tokens <- tokens[!is.na(tokens)]
-  }
+  if (!is.na(delim)) tokens <- stringr::str_trim(stringr::str_split(query, delim, simplify = T))
+  tokens <- Filter(nchar, tokens)
+  tokens <- tokens[!is.na(tokens)]
 
   results <- c()
   imax <- 1

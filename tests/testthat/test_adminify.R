@@ -17,7 +17,7 @@ test_that(
   "adminify matches one place name query",
   {
     expect_equal(
-      paste(Filter(Negate(is.na), adminify("Fairfax County", "")$ac), collapse = "."),
+      paste(Filter(Negate(is.na), adminify("Fairfax County")$ac), collapse = "."),
       "059"
     )
   }
