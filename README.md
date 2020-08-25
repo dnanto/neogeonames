@@ -48,7 +48,7 @@ paste(Filter(Negate(is.na), geo$ac), collapse = ".")
 #> [1] "US.VA.059"
 ```
 
-Here’s another example…
+Here’s another example with misspelled name…
 
 ``` r
 geo <- neogeonames::adminify("USA: Furfax County, Virginia", delim = "[:,]")
