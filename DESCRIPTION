@@ -1,20 +1,27 @@
 Package: neogeonames
 Title: New GeoNames Data Package and Functions in R
 Version: 0.0.0.9000
-Authors@R: person("Daniel", "Negrón", email = "dnegron2@gmu.edu", role = c("aut", "cre"))
+Authors@R: 
+    person(given = "Daniel",
+           family = "Negrón",
+           role = c("aut", "cre"),
+           email = "dnegron2@gmu.edu")
 Maintainer: Daniel Negrón <dnegron2@gmu.edu>
-Description: This package provides GeoNames Gazetteer data and functions to standardize place names.
+Description: This package provides GeoNames Gazetteer data
+    and functions to standardize place names.
+License: MIT + file LICENSE
 URL: https://github.com/dnanto/neogeonames
 BugReports: https://github.com/dnanto/neogeonames/issues
-Depends: R (>= 3.5)
-License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.1
-VignetteBuilder: knitr
+Depends: 
+    R (>= 3.5)
 Imports: 
     stringr
 Suggests: 
     knitr,
     rmarkdown,
     testthat
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
