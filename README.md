@@ -8,6 +8,8 @@
 [![License:
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dnanto/neogeonames/blob/master/LICENSE)
 [![](https://img.shields.io/badge/devel%20version-0.0.0.9000-blue.svg)](https://github.com/dnanto/neogeonames)
+[![R build
+status](https://github.com/dnanto/neogeonames/workflows/R-CMD-check/badge.svg)](https://github.com/dnanto/neogeonames/actions)
 <!-- badges: end -->
 
 The goal of neogeonames is to provide a useful subset of the [GeoNames
@@ -67,7 +69,7 @@ Use the geonameid to get the coordinates.
 idx <- which(is.na(c(geo$id, NA)))[[1]] - 1
 with(geoname, geoname[geonameid == geo$id[idx], c("longitude", "latitude")])
 #>        longitude latitude
-#> 403799 -77.27622 38.83469
+#> 403880 -77.27622 38.83469
 ```
 
 Also, check out the `vignette("neogeonames")`.
