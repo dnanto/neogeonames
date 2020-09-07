@@ -2,15 +2,15 @@
 library(neogeonames)
 df <- read.delim(system.file("extdata", "feature.tsv", package = "neogeonames"))
 country <- unique(df$country)
-geo <- lapply(country, adminify, delim = "[:,]")
+geo <- lapply(country, adminify_delim, delim = "[:,]")
 df.ac <- data.frame(id = 1:length(geo), country = country, do.call(rbind, lapply(geo, `[[`, "ac")))
 df.id <- data.frame(id = 1:length(geo), country = country, do.call(rbind, lapply(geo, `[[`, "id")))
 
 ## -----------------------------------------------------------------------------
-knitr::kable(head(df.ac))
+knitr::kable(head(df.ac, n = 20))
 
 ## -----------------------------------------------------------------------------
-knitr::kable(head(df.id))
+knitr::kable(head(df.id, n = 20))
 
 ## -----------------------------------------------------------------------------
 # remove rows with missing country_code
@@ -33,4 +33,18 @@ df.coor <- merge(df.ac, df.coor, by = "id", all.x = T)
 df.geo <- merge(df, df.coor[2:ncol(df.coor)], by = "country", all.x = T)
 keys <- c("country", "ac0", "ac1", "ac2", "ac3", "ac4", "latitude", "longitude")
 knitr::kable(head(unique(df.geo[keys])))
+
+## -----------------------------------------------------------------------------
+regexes <- list(
+  list(pattern = "(.+)", names = c("ac0")),
+  list(pattern = "(.+):\\s*(.+)", names = c("ac0", "ac1")),
+  list(pattern = "(.+):\\s*.+,\\s*(.+)", names = c("ac0", "ac1")),
+  list(pattern = "(.+):\\s*(.+)\\s*,\\s*(.+)", names = c("ac0", "ac1", "ac2")),
+  list(pattern = "(.+):\\s*(.+)\\s*,\\s*(.+)", names = c("ac0", "ac2", "ac1"))
+)
+geo <- lapply(country, adminify_regexes, regexes = regexes)
+df.ac <- data.frame(id = 1:length(geo), country = country, do.call(rbind, lapply(geo, `[[`, "ac")))
+
+## -----------------------------------------------------------------------------
+knitr::kable(head(df.ac, n = 20))
 

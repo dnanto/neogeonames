@@ -42,7 +42,7 @@ a set of ISO3166 codes.
 
 ```{r example}
 library(neogeonames)
-geo <- neogeonames::adminify("USA: Fairfax County, Virginia", delim = "[:,]")
+geo <- neogeonames::adminify_delim("USA: Fairfax County, Virginia", delim = "[:,]")
 geo
 paste(Filter(Negate(is.na), geo$ac), collapse = ".")
 ```
@@ -50,7 +50,7 @@ paste(Filter(Negate(is.na), geo$ac), collapse = ".")
 Here's another example with misspelled name...
 
 ```{r}
-geo <- neogeonames::adminify("USA: Furfax County, Virginia", delim = "[:,]")
+geo <- neogeonames::adminify_delim("USA: Furfax County, Virginia", delim = "[:,]")
 geo
 ```
 
@@ -60,6 +60,15 @@ Use the geonameid to get the coordinates.
 # get the id that occurs before the first NA value
 idx <- which(is.na(c(geo$id, NA)))[[1]] - 1
 with(geoname, geoname[geonameid == geo$id[idx], c("longitude", "latitude")])
+```
+
+Here's another example using regular expressions...
+
+```{r}
+adminify_regex(
+  "USA: Furfax County, Virginia",
+  list(pattern = "(.+):\\s*(.+)\\s*,\\s*(.+)", names = c("ac0", "ac2", "ac1"))
+)
 ```
 
 Also, check out the `vignette("neogeonames")`.

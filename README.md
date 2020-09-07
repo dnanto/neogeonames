@@ -35,7 +35,7 @@ misspelled place name into a set of ISO3166 codes.
 
 ``` r
 library(neogeonames)
-geo <- neogeonames::adminify("USA: Fairfax County, Virginia", delim = "[:,]")
+geo <- neogeonames::adminify_delim("USA: Fairfax County, Virginia", delim = "[:,]")
 geo
 #> $id
 #>     ac0     ac1     ac2     ac3     ac4 
@@ -51,7 +51,7 @@ paste(Filter(Negate(is.na), geo$ac), collapse = ".")
 Here’s another example with misspelled name…
 
 ``` r
-geo <- neogeonames::adminify("USA: Furfax County, Virginia", delim = "[:,]")
+geo <- neogeonames::adminify_delim("USA: Furfax County, Virginia", delim = "[:,]")
 geo
 #> $id
 #>     ac0     ac1     ac2     ac3     ac4 
@@ -70,6 +70,22 @@ idx <- which(is.na(c(geo$id, NA)))[[1]] - 1
 with(geoname, geoname[geonameid == geo$id[idx], c("longitude", "latitude")])
 #>        longitude latitude
 #> 403880 -77.27622 38.83469
+```
+
+Here’s another example using regular expressions…
+
+``` r
+adminify_regex(
+  "USA: Furfax County, Virginia",
+  list(pattern = "(.+):\\s*(.+)\\s*,\\s*(.+)", names = c("ac0", "ac2", "ac1"))
+)
+#> $id
+#>     ac0     ac1     ac2     ac3     ac4 
+#> 6252001 6254928 4758041      NA      NA 
+#> 
+#> $ac
+#>   ac0   ac1   ac2   ac3   ac4 
+#>  "US"  "VA" "059"    NA    NA
 ```
 
 Also, check out the `vignette("neogeonames")`.

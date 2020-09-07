@@ -4,17 +4,10 @@
 \alias{countrify}
 \title{Calculate the \code{\link{country}} row.}
 \usage{
-countrify(
-  query,
-  dfcou = neogeonames::country,
-  n = 1,
-  p = list(ignore.case = T)
-)
+countrify(query, n = 1, p = list(ignore.case = T))
 }
 \arguments{
 \item{query}{The country query.}
-
-\item{dfcou}{The data frame of \code{\link{country}} data.}
 
 \item{n}{The number of allowable fuzzy search results before returning the top result,
 otherwise nothing.}

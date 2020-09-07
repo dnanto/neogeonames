@@ -12,7 +12,7 @@
 
 <meta name="author" content="Daniel Antonio Negrón" />
 
-<meta name="date" content="2020-08-25" />
+<meta name="date" content="2020-09-07" />
 
 <title>New GeoNames Data Package and Functions in R</title>
 
@@ -331,7 +331,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">New GeoNames Data Package and Functions in R</h1>
 <h4 class="author">Daniel Antonio Negrón</h4>
-<h4 class="date">2020-08-25</h4>
+<h4 class="date">2020-09-07</h4>
 
 
 
@@ -339,11 +339,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(neogeonames)</span>
 <span id="cb1-2"><a href="#cb1-2"></a>df &lt;-<span class="st"> </span><span class="kw">read.delim</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;feature.tsv&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;neogeonames&quot;</span>))</span>
 <span id="cb1-3"><a href="#cb1-3"></a>country &lt;-<span class="st"> </span><span class="kw">unique</span>(df<span class="op">$</span>country)</span>
-<span id="cb1-4"><a href="#cb1-4"></a>geo &lt;-<span class="st"> </span><span class="kw">lapply</span>(country, adminify, <span class="dt">delim =</span> <span class="st">&quot;[:,]&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4"></a>geo &lt;-<span class="st"> </span><span class="kw">lapply</span>(country, adminify_delim, <span class="dt">delim =</span> <span class="st">&quot;[:,]&quot;</span>)</span>
 <span id="cb1-5"><a href="#cb1-5"></a>df.ac &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">id =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(geo), <span class="dt">country =</span> country, <span class="kw">do.call</span>(rbind, <span class="kw">lapply</span>(geo, <span class="st">`</span><span class="dt">[[</span><span class="st">`</span>, <span class="st">&quot;ac&quot;</span>)))</span>
 <span id="cb1-6"><a href="#cb1-6"></a>df.id &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">id =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(geo), <span class="dt">country =</span> country, <span class="kw">do.call</span>(rbind, <span class="kw">lapply</span>(geo, <span class="st">`</span><span class="dt">[[</span><span class="st">`</span>, <span class="st">&quot;id&quot;</span>)))</span></code></pre></div>
 <p>View the admin codes.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(df.ac))</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(df.ac, <span class="dt">n =</span> <span class="dv">20</span>))</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -411,10 +411,136 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">USA</td>
+<td align="left">US</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left">Singapore</td>
+<td align="left">SG</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left">Egypt</td>
+<td align="left">EG</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">Spain</td>
+<td align="left">ES</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="left">USA: Wisconsin</td>
+<td align="left">US</td>
+<td align="left">WI</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="left">USA: New York</td>
+<td align="left">US</td>
+<td align="left">NY</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">14</td>
+<td align="left">USA: Pennsylvania</td>
+<td align="left">US</td>
+<td align="left">PA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">15</td>
+<td align="left">Japan</td>
+<td align="left">JP</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="left">USA: Iowa</td>
+<td align="left">US</td>
+<td align="left">IA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">17</td>
+<td align="left">Netherlands</td>
+<td align="left">NL</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">18</td>
+<td align="left">Canada</td>
+<td align="left">CA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="left">USA: Lackland, TX</td>
+<td align="left">US</td>
+<td align="left">TX</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="left">Japan:Fukuoka, Tatara river</td>
+<td align="left">JP</td>
+<td align="left">07</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
 </tbody>
 </table>
 <p>View the “geonameid” associated with each admin code.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(df.id))</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(df.id, <span class="dt">n =</span> <span class="dv">20</span>))</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -478,6 +604,132 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="left">Taiwan</td>
 <td align="right">1668284</td>
 <td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">USA</td>
+<td align="right">6252001</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left">Singapore</td>
+<td align="right">1880251</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left">Egypt</td>
+<td align="right">357994</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">Spain</td>
+<td align="right">2510769</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="left">USA: Wisconsin</td>
+<td align="right">6252001</td>
+<td align="right">5279468</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="left">USA: New York</td>
+<td align="right">6252001</td>
+<td align="right">5128638</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">14</td>
+<td align="left">USA: Pennsylvania</td>
+<td align="right">6252001</td>
+<td align="right">6254927</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">15</td>
+<td align="left">Japan</td>
+<td align="right">1861060</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="left">USA: Iowa</td>
+<td align="right">6252001</td>
+<td align="right">4862182</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">17</td>
+<td align="left">Netherlands</td>
+<td align="right">2750405</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">18</td>
+<td align="left">Canada</td>
+<td align="right">6251999</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="left">USA: Lackland, TX</td>
+<td align="right">6252001</td>
+<td align="right">4046274</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="left">Japan:Fukuoka, Tatara river</td>
+<td align="right">1861060</td>
+<td align="right">1863967</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
@@ -585,6 +837,213 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="left">NA</td>
 <td align="right">-10.0000</td>
 <td align="right">-55.00000</td>
+</tr>
+</tbody>
+</table>
+<p>Runt the Same example using regular expressions.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>regexes &lt;-<span class="st"> </span><span class="kw">list</span>(</span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="kw">list</span>(<span class="dt">pattern =</span> <span class="st">&quot;(.+)&quot;</span>, <span class="dt">names =</span> <span class="kw">c</span>(<span class="st">&quot;ac0&quot;</span>)),</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="kw">list</span>(<span class="dt">pattern =</span> <span class="st">&quot;(.+):</span><span class="ch">\\</span><span class="st">s*(.+)&quot;</span>, <span class="dt">names =</span> <span class="kw">c</span>(<span class="st">&quot;ac0&quot;</span>, <span class="st">&quot;ac1&quot;</span>)),</span>
+<span id="cb5-4"><a href="#cb5-4"></a>  <span class="kw">list</span>(<span class="dt">pattern =</span> <span class="st">&quot;(.+):</span><span class="ch">\\</span><span class="st">s*.+,</span><span class="ch">\\</span><span class="st">s*(.+)&quot;</span>, <span class="dt">names =</span> <span class="kw">c</span>(<span class="st">&quot;ac0&quot;</span>, <span class="st">&quot;ac1&quot;</span>)),</span>
+<span id="cb5-5"><a href="#cb5-5"></a>  <span class="kw">list</span>(<span class="dt">pattern =</span> <span class="st">&quot;(.+):</span><span class="ch">\\</span><span class="st">s*(.+)</span><span class="ch">\\</span><span class="st">s*,</span><span class="ch">\\</span><span class="st">s*(.+)&quot;</span>, <span class="dt">names =</span> <span class="kw">c</span>(<span class="st">&quot;ac0&quot;</span>, <span class="st">&quot;ac1&quot;</span>, <span class="st">&quot;ac2&quot;</span>)),</span>
+<span id="cb5-6"><a href="#cb5-6"></a>  <span class="kw">list</span>(<span class="dt">pattern =</span> <span class="st">&quot;(.+):</span><span class="ch">\\</span><span class="st">s*(.+)</span><span class="ch">\\</span><span class="st">s*,</span><span class="ch">\\</span><span class="st">s*(.+)&quot;</span>, <span class="dt">names =</span> <span class="kw">c</span>(<span class="st">&quot;ac0&quot;</span>, <span class="st">&quot;ac2&quot;</span>, <span class="st">&quot;ac1&quot;</span>))</span>
+<span id="cb5-7"><a href="#cb5-7"></a>)</span>
+<span id="cb5-8"><a href="#cb5-8"></a>geo &lt;-<span class="st"> </span><span class="kw">lapply</span>(country, adminify_regexes, <span class="dt">regexes =</span> regexes)</span>
+<span id="cb5-9"><a href="#cb5-9"></a>df.ac &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">id =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(geo), <span class="dt">country =</span> country, <span class="kw">do.call</span>(rbind, <span class="kw">lapply</span>(geo, <span class="st">`</span><span class="dt">[[</span><span class="st">`</span>, <span class="st">&quot;ac&quot;</span>)))</span></code></pre></div>
+<p>View the admin codes.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(df.ac, <span class="dt">n =</span> <span class="dv">20</span>))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="left">country</th>
+<th align="left">ac0</th>
+<th align="left">ac1</th>
+<th align="left">ac2</th>
+<th align="left">ac3</th>
+<th align="left">ac4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">China</td>
+<td align="left">CN</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">China: Guangzhou</td>
+<td align="left">CN</td>
+<td align="left">30</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">South Korea</td>
+<td align="left">KR</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">Argentina</td>
+<td align="left">AR</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">China: Shanxi, Qishan</td>
+<td align="left">CN</td>
+<td align="left">NA</td>
+<td align="left">3306</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">Taiwan</td>
+<td align="left">TW</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">USA</td>
+<td align="left">US</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left">Singapore</td>
+<td align="left">SG</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left">Egypt</td>
+<td align="left">EG</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">Spain</td>
+<td align="left">ES</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="left">USA: Wisconsin</td>
+<td align="left">US</td>
+<td align="left">WI</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="left">USA: New York</td>
+<td align="left">US</td>
+<td align="left">NY</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">14</td>
+<td align="left">USA: Pennsylvania</td>
+<td align="left">US</td>
+<td align="left">PA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">15</td>
+<td align="left">Japan</td>
+<td align="left">JP</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="left">USA: Iowa</td>
+<td align="left">US</td>
+<td align="left">IA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">17</td>
+<td align="left">Netherlands</td>
+<td align="left">NL</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">18</td>
+<td align="left">Canada</td>
+<td align="left">CA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="left">USA: Lackland, TX</td>
+<td align="left">US</td>
+<td align="left">TX</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="left">Japan:Fukuoka, Tatara river</td>
+<td align="left">JP</td>
+<td align="left">07</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
 </tr>
 </tbody>
 </table>
