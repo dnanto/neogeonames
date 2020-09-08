@@ -16,9 +16,9 @@ knitr::kable(head(df.id, n = 20))
 # remove rows with missing country_code
 df.coor <- df.id[!is.na(df.id$ac0), ]
 # set admin codes with no parent code to NA, since they lack support
-df.coor <- apply(cbind(df.coor, NA), 1, function(row) 
+df.coor <- apply(cbind(df.coor, NA), 1, function(row) {
   if (!is.na(j <- which(is.na(row))[1])) row[j - 1]
-)
+})
 
 # merge coordinate data
 df.coor <- merge(

@@ -64,7 +64,7 @@ geonames_install <- function(burl = "http://download.geonames.org/export/dump") 
     "geonameid", "name", "asciiname", "latitude", "longitude",
     "feature_code", "country_code", "admin1_code", "admin2_code", "admin3_code", "admin4_code",
     "modification_date"
-    )
+  )
   geoname <- readr::read_tsv_chunked(
     destfile,
     readr::DataFrameCallback$new(function(x, pos) x[x$feature_code %in% feature_codes, keys]),

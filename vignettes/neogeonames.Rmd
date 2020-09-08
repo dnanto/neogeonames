@@ -38,9 +38,9 @@ Merge coordinate data with the admin code results and back with the original dat
 # remove rows with missing country_code
 df.coor <- df.id[!is.na(df.id$ac0), ]
 # set admin codes with no parent code to NA, since they lack support
-df.coor <- apply(cbind(df.coor, NA), 1, function(row) 
+df.coor <- apply(cbind(df.coor, NA), 1, function(row) {
   if (!is.na(j <- which(is.na(row))[1])) row[j - 1]
-)
+})
 
 # merge coordinate data
 df.coor <- merge(
@@ -57,7 +57,7 @@ keys <- c("country", "ac0", "ac1", "ac2", "ac3", "ac4", "latitude", "longitude")
 knitr::kable(head(unique(df.geo[keys])))
 ```
 
-Runt the Same example using regular expressions.
+Run the same example using regular expressions.
 
 ```{r}
 regexes <- list(
