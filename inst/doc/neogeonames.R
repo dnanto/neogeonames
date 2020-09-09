@@ -22,7 +22,7 @@ df.coor <- apply(cbind(df.coor, NA), 1, function(row) {
 
 # merge coordinate data
 df.coor <- merge(
-  data.frame(id = names(df.coor), geonameid = df.coor),
+  data.frame(id = names(df.coor), geonameid = as.integer(df.coor)),
   neogeonames::geoname[c("geonameid", "latitude", "longitude")],
   by = "geonameid",
   all.x = T
