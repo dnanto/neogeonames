@@ -117,7 +117,6 @@ ggplot() +
     data = df.capital, fill = "blue", pch = 21,
     aes(longitude, latitude)
   ) +
-  coord_map() +
   theme_minimal()
 ```
 

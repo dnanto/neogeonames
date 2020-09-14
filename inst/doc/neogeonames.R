@@ -34,7 +34,7 @@ df.geo <- merge(df, df.coor[2:ncol(df.coor)], by = "country", all.x = T)
 keys <- c("country", "ac0", "ac1", "ac2", "ac3", "ac4", "latitude", "longitude")
 knitr::kable(head(unique(df.geo[keys])))
 
-## ---- fig.align="center", fig.width=8, warning=F------------------------------
+## ---- fig.align="center", warning=F-------------------------------------------
 library(ggplot2)
 ggplot() + 
   geom_polygon(
@@ -45,7 +45,6 @@ ggplot() +
     data = df.geo, fill = "blue", pch = 21,
     aes(longitude, latitude)
   ) +
-  coord_map() +
   theme_minimal()
 
 ## -----------------------------------------------------------------------------
