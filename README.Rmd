@@ -4,7 +4,7 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
+```{r, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 The goal of neogeonames is to provide a useful subset of the 
 [GeoNames Gazetteer Data](http://download.geonames.org/export/dump/) with functions to infer 
 [ISO3166](https://en.wikipedia.org/wiki/ISO_3166) codes for place
-name queries in a hierarchical manner without a REST API.
+name queries in a hierarchical manner without a REST API. This package also includes coordinates and shape data for plotting maps, language codes, and timezone data.
 
 ## Installation
 
@@ -40,7 +40,7 @@ devtools::install_github("dnanto/neogeonames")
 This is a basic example which shows you how to standardize potentially misspelled place name into 
 a set of ISO3166 codes.
 
-```{r example}
+```{r}
 library(neogeonames)
 geo <- neogeonames::adminify_delim("USA: Fairfax County, Virginia", delim = "[:,]")
 geo
@@ -70,6 +70,37 @@ adminify_regex(
   list(pattern = "(.+):\\s*(.+)\\s*,\\s*(.+)", names = c("ac0", "ac2", "ac1"))
 )
 ```
+
+Plot all feature codes in the US state of Virginia.
+
+```{r, fig.width=10, fig.height=4}
+library(ggplot2)
+df.virginia <- with(geoname, geoname[which(country_code == "US" & admin1_code == "VA"), ])
+ggplot(df.virginia, aes(longitude, latitude)) + 
+  geom_point(aes(fill = feature_code), pch = 21, size = 2, alpha = 0.75) + 
+  guides(fill = guide_legend(nrow = 1)) +
+  coord_map() +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+Plot all world capitals.
+
+```{r, fig.width=10, fig.height=4}
+df.capital <- with(geoname, geoname[which(feature_code == "PPLC"), ])
+ggplot() + 
+  geom_polygon(
+    data = shape, color = "black", fill = "white",
+    aes(long, lat, group = group)
+  ) +
+  geom_point(
+    data = df.capital, fill = "blue", pch = 21,
+    aes(longitude, latitude)
+  ) +
+  coord_map() +
+  theme_minimal()
+```
+
 
 Also, check out the `vignette("neogeonames")`.
 

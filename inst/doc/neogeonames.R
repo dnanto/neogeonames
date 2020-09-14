@@ -34,6 +34,20 @@ df.geo <- merge(df, df.coor[2:ncol(df.coor)], by = "country", all.x = T)
 keys <- c("country", "ac0", "ac1", "ac2", "ac3", "ac4", "latitude", "longitude")
 knitr::kable(head(unique(df.geo[keys])))
 
+## ---- fig.align="center", fig.width=8, warning=F------------------------------
+library(ggplot2)
+ggplot() + 
+  geom_polygon(
+    data = shape, color = "black", fill = "white",
+    aes(long, lat, group = group)
+  ) +
+  geom_point(
+    data = df.geo, fill = "blue", pch = 21,
+    aes(longitude, latitude)
+  ) +
+  coord_map() +
+  theme_minimal()
+
 ## -----------------------------------------------------------------------------
 regexes <- list(
   list(pattern = "(.+)", names = c("ac0")),

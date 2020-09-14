@@ -16,7 +16,8 @@ The goal of neogeonames is to provide a useful subset of the [GeoNames
 Gazetteer Data](http://download.geonames.org/export/dump/) with
 functions to infer [ISO3166](https://en.wikipedia.org/wiki/ISO_3166)
 codes for place name queries in a hierarchical manner without a REST
-API.
+API. This package also includes coordinates and shape data for plotting
+maps, language codes, and timezone data.
 
 ## Installation
 
@@ -69,7 +70,7 @@ Use the geonameid to get the coordinates.
 idx <- which(is.na(c(geo$id, NA)))[[1]] - 1
 with(geoname, geoname[geonameid == geo$id[idx], c("longitude", "latitude")])
 #>        longitude latitude
-#> 403880 -77.27622 38.83469
+#> 403895 -77.27622 38.83469
 ```
 
 Here’s another example using regular expressions…
@@ -87,6 +88,40 @@ adminify_regex(
 #>   ac0   ac1   ac2   ac3   ac4 
 #>  "US"  "VA" "059"    NA    NA
 ```
+
+Plot all feature codes in the US state of Virginia.
+
+``` r
+library(ggplot2)
+df.virginia <- with(geoname, geoname[which(country_code == "US" & admin1_code == "VA"), ])
+ggplot(df.virginia, aes(longitude, latitude)) + 
+  geom_point(aes(fill = feature_code), pch = 21, size = 2, alpha = 0.75) + 
+  guides(fill = guide_legend(nrow = 1)) +
+  coord_map() +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+<img src="man/figuresunnamed-chunk-6-1.png" width="100%" />
+
+Plot all world capitals.
+
+``` r
+df.capital <- with(geoname, geoname[which(feature_code == "PPLC"), ])
+ggplot() + 
+  geom_polygon(
+    data = shape, color = "black", fill = "white",
+    aes(long, lat, group = group)
+  ) +
+  geom_point(
+    data = df.capital, fill = "blue", pch = 21,
+    aes(longitude, latitude)
+  ) +
+  coord_map() +
+  theme_minimal()
+```
+
+<img src="man/figuresunnamed-chunk-7-1.png" width="100%" />
 
 Also, check out the `vignette("neogeonames")`.
 

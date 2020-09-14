@@ -7,26 +7,25 @@
 \format{
 A data frame with 252 rows and 19 variables:
 \describe{
-	 \item{iso}{ISO 3166-1 alpha-2}
-	 \item{iso3}{ISO 3166-1 alpha-3}
-	 \item{iso_numeric}{ISO 3166-1 numeric}
-	 \item{fips}{FIPS codes}
-	 \item{country}{country}
-	 \item{capital}{capital}
-	 \item{area}{area in km^2}
-	 \item{population}{population}
-	 \item{continent}{continent}
-	 \item{tld}{top-level domain}
-	 \item{currency_code}{ISO 4217}
-	 \item{currency_name}{currency name}
-	 \item{phone}{calling code}
-	 \item{postal_code_format}{postal code format}
-	 \item{postal_code_regex}{postal code regex}
-	 \item{languages}{ISO 639 + ISO 3166}
-	 \item{geonameid}{geonameid}
-	 \item{neighbours}{neighbouring countries}
-	 \item{equivalent_fips_code}{equivalent fips code}
-  ...
+  \item{iso}{ISO 3166-1 alpha-2}
+  \item{iso3}{ISO 3166-1 alpha-3}
+  \item{iso_numeric}{ISO 3166-1 numeric}
+  \item{fips}{FIPS codes}
+  \item{country}{country}
+  \item{capital}{capital}
+  \item{area}{area in km^2}
+  \item{population}{population}
+  \item{continent}{continent}
+  \item{tld}{top-level domain}
+  \item{currency_code}{ISO 4217}
+  \item{currency_name}{currency name}
+  \item{phone}{calling code}
+  \item{postal_code_format}{postal code format}
+  \item{postal_code_regex}{postal code regex}
+  \item{languages}{ISO 639 + ISO 3166}
+  \item{geonameid}{geonameid}
+  \item{neighbours}{neighbouring countries}
+  \item{equivalent_fips_code}{equivalent fips code}
 }
 }
 \source{

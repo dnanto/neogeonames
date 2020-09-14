@@ -27,6 +27,37 @@ akac <- c(
   ac4 = "admin4_code"
 )
 
+#' Calculate the \code{\link{alternate}} row.
+#'
+#' The function performs a case-insensitive search for matches to the alternate name.
+#' It also performs a fuzzy search using \code{\link{agrep}} as a fall back.
+#'
+#' @param query The country query.
+#' @param n The number of allowable fuzzy search results before returning the top result,
+#'          otherwise nothing.
+#' @param p The parameters for \code{\link{agrep}}.
+#' @seealso \code{\link{agrep}}
+#' @return The rows or \code{data.frame} with 0 rows.
+#' @export
+unalternatify <- function(query, n = 1, p = list(ignore.case = T)) {
+  with(neogeonames::alternate, {
+    idx <- NULL
+    query <- toupper(query)
+    # exact match
+    if (idx.m <- match(query, toupper(alternateName), nomatch = F)) {
+      idx <- idx.m
+    }
+    # fuzzy match
+    else if (n > 0) {
+      idx.m <- do.call(agrep, c(list(query, alternateName), p))
+      if (!identical(idx.m, integer(0)) & length(idx.m) <= n) {
+        idx <- idx.m[[1]]
+      }
+    }
+    neogeonames::alternate[idx, ]
+  })
+}
+
 #' Calculate the \code{\link{country}} row.
 #'
 #' The function performs a case-insensitive search for matches to ISO codes or country name.
@@ -54,7 +85,11 @@ countrify <- function(query, n = 1, p = list(ignore.case = T)) {
     } # check country name
     else if (idx.m <- match(query, toupper(country), nomatch = F)) {
       idx <- idx.m
-    } # fuzzy search
+    } # check alternate name
+    else if (nrow(rows <- unalternatify(query, n, p)) > 0) {
+      idx <- which(geonameid == rows[[1, "geonameid"]])
+    }
+    # fuzzy search
     else if (n > 0) {
       idx.m <- do.call(agrep, c(list(query, country), p))
       if (!identical(idx.m, integer(0)) & length(idx.m) <= n) {

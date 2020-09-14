@@ -5,21 +5,20 @@
 \alias{geoname}
 \title{geoname}
 \format{
-A data frame with 445722 rows and 12 columns
+A data frame with 445818 rows and 12 columns
 \describe{
-	 \item{geonameid}{integer id of record in geonames database}
-	 \item{name}{name of geographical point (utf8) varchar(200)}
-	 \item{asciiname}{name of geographical point in plain ascii characters, varchar(200)}
-	 \item{latitude}{latitude in decimal degrees (wgs84)}
-	 \item{longitude}{longitude in decimal degrees (wgs84)}
-	 \item{feature_code}{see \url{http://www.geonames.org/export/codes.html}, varchar(10)}
-	 \item{country_code}{ISO-3166 2-letter country code, 2 characters}
-	 \item{admin1_code}{fipscode (subject to change to iso code), see exceptions below, see file admin1Codes.txt for display names of this code; varchar(20)}
-	 \item{admin2_code}{code for the second administrative division, a county in the US, see file admin2Codes.txt; varchar(80) }
-	 \item{admin3_code}{code for third level administrative division, varchar(20)}
-	 \item{admin4_code}{code for fourth level administrative division, varchar(20)}
-	 \item{modification_date}{date of last modification in yyyy-MM-dd format}
-  ...
+  \item{geonameid}{integer id of record in geonames database}
+  \item{name}{name of geographical point (utf8) varchar(200)}
+  \item{asciiname}{name of geographical point in plain ascii characters, varchar(200)}
+  \item{latitude}{latitude in decimal degrees (wgs84)}
+  \item{longitude}{longitude in decimal degrees (wgs84)}
+  \item{feature_code}{see \url{http://www.geonames.org/export/codes.html}, varchar(10)}
+  \item{country_code}{ISO-3166 2-letter country code, 2 characters}
+  \item{admin1_code}{fipscode (subject to change to iso code), see exceptions below, see file admin1Codes.txt for display names of this code; varchar(20)}
+  \item{admin2_code}{code for the second administrative division, a county in the US, see file admin2Codes.txt; varchar(80) }
+  \item{admin3_code}{code for third level administrative division, varchar(20)}
+  \item{admin4_code}{code for fourth level administrative division, varchar(20)}
+  \item{modification_date}{date of last modification in yyyy-MM-dd format}
 }
 }
 \source{
@@ -37,8 +36,8 @@ Feature class:
 \details{
 \tabular{ll}{
   feature_class \tab definition \cr
-  A \tab country, state, region,... \cr
-  P \tab city, village,... \cr
+  A \tab country, state, region, ... \cr
+  P \tab city, village, ... \cr
  }
 
 Feature code:

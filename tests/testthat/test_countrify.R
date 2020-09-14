@@ -31,6 +31,10 @@ test_that("countrify matches to country name", {
   expect_equal(countrify("UNITED STATES")$iso, "US")
 })
 
+test_that("countrify matches to alternate name", {
+  expect_equal(countrify("Czech Republic")$iso, "CZ")
+})
+
 test_that(
   "countrify matches to misspelled country name",
   expect_equal(countrify("Viet Nam")$iso, "VN")
